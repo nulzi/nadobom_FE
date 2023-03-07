@@ -4,11 +4,12 @@ plugins {
 }
 
 android {
+    namespace 'com.example.tflite'
     compileSdk 33
 
     defaultConfig {
         applicationId "com.example.tflite"
-        minSdk 21
+        minSdk 24
         targetSdk 33
         versionCode 1
         versionName "1.0"
