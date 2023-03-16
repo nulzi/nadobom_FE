@@ -1,0 +1,6 @@
+bicycle
+scooter
+truck
+movable_signage
+bollard
+barricade
