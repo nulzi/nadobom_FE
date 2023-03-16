@@ -13,24 +13,45 @@ import android.os.Handler
 import android.os.HandlerThread
 import android.view.Surface
 import android.view.TextureView
+import android.widget.ImageView
+import androidx.core.app.ActivityCompat.requestPermissions
 import androidx.core.content.ContextCompat
+import com.example.tflite.ml.OBv1
+import org.tensorflow.lite.support.common.FileUtil
+import org.tensorflow.lite.support.image.ImageProcessor
+import org.tensorflow.lite.support.image.TensorImage
+import org.tensorflow.lite.support.image.ops.ResizeOp
 
 class MainActivity : AppCompatActivity() {
 
+    val paint = Paint()
+    lateinit var labels:List<String>
+    lateinit var imageProcessor:ImageProcessor
+    lateinit var bitmap: Bitmap
+    lateinit var imageView: ImageView
     lateinit var cameraDevice: CameraDevice
     lateinit var handler: Handler
     lateinit var cameraManager: CameraManager
     lateinit var textureView: TextureView
+    lateinit var model:OBv1
 
+    var colors = listOf<Int>(
+        Color.BLUE, Color.GREEN, Color.RED, Color.CYAN, Color.YELLOW, Color.MAGENTA
+    )
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         getPermission()
 
+        labels = FileUtil.loadLabels(this, "labels.txt")
+        imageProcessor = ImageProcessor.Builder().add(ResizeOp(300,300,ResizeOp.ResizeMethod.BILINEAR)).build()
+        model = OBv1.newInstance(this)
         val handlerThread = HandlerThread("videoThread")
         handlerThread.start()
         handler = Handler(handlerThread.looper)
+
+        imageView = findViewById(R.id.imageView)
 
         textureView = findViewById(R.id.textureView)
         textureView.surfaceTextureListener = object :TextureView.SurfaceTextureListener{
@@ -46,7 +67,39 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onSurfaceTextureUpdated(p0: SurfaceTexture) {
+                bitmap = textureView.bitmap!!
 
+                var image = TensorImage.fromBitmap(bitmap)
+                image = imageProcessor.process(image)
+
+                val outputs = model.process(image)
+                val locations = outputs.locationsAsTensorBuffer.floatArray
+                val classes = outputs.classesAsTensorBuffer.floatArray
+                val scores = outputs.scoresAsTensorBuffer.floatArray
+                val numberOfDetections = outputs.numberOfDetectionsAsTensorBuffer.floatArray
+
+                var mutable = bitmap.copy(Bitmap.Config.ARGB_8888,true)
+                val canvas = Canvas(mutable)
+
+                val h = mutable.height
+                val w = mutable.width
+
+                paint.textSize = h/15f
+                paint.strokeWidth = h/85f
+                var x = 0
+                scores.forEachIndexed{ index,fl ->
+                    x= index
+                    x *= 4
+                    if(fl > 0.5){
+                        paint.setColor(colors.get(index))
+                        paint.style = Paint.Style.STROKE
+                        canvas.drawRect(RectF(locations.get(x+1)*w,locations.get(x)*h,locations.get(x+3)*w,locations.get(x+2)*h),paint)
+                        paint.style = Paint.Style.FILL
+                        canvas.drawText(labels.get(classes.get(index).toInt())+" "+fl.toString(), locations.get(x+1)*w,locations.get(x)*h,paint)
+                    }
+                }
+
+                imageView.setImageBitmap(mutable)
             }
 
         }
@@ -56,6 +109,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
+        model.close()
     }
 
     @SuppressLint("MissingPermission")//already check getPermission
