@@ -100,12 +100,23 @@ class MainActivity : AppCompatActivity() {
                 scores.forEachIndexed{ index,fl ->
                     x= index
                     x *= 4
-                    if(fl > 0.5){
+                    if (fl > 0.75) {
                         paint.setColor(colors.get(index))
                         paint.style = Paint.Style.STROKE
                         canvas.drawRect(RectF(locations.get(x+1)*w,locations.get(x)*h,locations.get(x+3)*w,locations.get(x+2)*h),paint)
                         paint.style = Paint.Style.FILL
                         canvas.drawText(labels.get(classes.get(index).toInt())+" "+fl.toString(), locations.get(x+1)*w,locations.get(x)*h,paint)
+                        if (classes.get(index).toInt() < 6) {
+                            paint.style = Paint.Style.FILL
+                            canvas.drawText(
+                                labels.get(
+                                    classes.get(index).toInt()
+                                ) + " " + fl.toString(),
+                                locations.get(x + 1) * w,
+                                locations.get(x) * h,
+                                paint
+                            )
+                        }
                     }
                 }
 
