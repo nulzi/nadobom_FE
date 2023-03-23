@@ -36,8 +36,18 @@ class MainActivity : AppCompatActivity() {
     lateinit var model:OBv1
 
     var colors = listOf<Int>(
-        Color.BLUE, Color.GREEN, Color.RED, Color.CYAN, Color.YELLOW, Color.MAGENTA
+        Color.BLUE,
+        Color.GREEN,
+        Color.RED,
+        Color.CYAN,
+        Color.YELLOW,
+        Color.MAGENTA,
+        Color.GRAY,
+        Color.LTGRAY,
+        Color.BLACK,
+        Color.WHITE
     )
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
