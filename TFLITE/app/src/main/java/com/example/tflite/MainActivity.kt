@@ -17,6 +17,7 @@ import android.widget.ImageView
 import androidx.core.app.ActivityCompat.requestPermissions
 import androidx.core.content.ContextCompat
 import com.example.tflite.ml.OBv1
+import com.example.tflite.ml.ODv1
 import org.tensorflow.lite.support.common.FileUtil
 import org.tensorflow.lite.support.image.ImageProcessor
 import org.tensorflow.lite.support.image.TensorImage
@@ -34,6 +35,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var cameraManager: CameraManager
     lateinit var textureView: TextureView
     lateinit var model:OBv1
+    lateinit var model2: ODv1
 
     var colors = listOf<Int>(
         Color.BLUE,
@@ -57,6 +59,7 @@ class MainActivity : AppCompatActivity() {
         labels = FileUtil.loadLabels(this, "labels.txt")
         imageProcessor = ImageProcessor.Builder().add(ResizeOp(300,300,ResizeOp.ResizeMethod.BILINEAR)).build()
         model = OBv1.newInstance(this)
+        model2 = ODv1.newInstance(this)
         val handlerThread = HandlerThread("videoThread")
         handlerThread.start()
         handler = Handler(handlerThread.looper)
