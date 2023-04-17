@@ -33,3 +33,6 @@ proguard/
 
 # Mac-specific files
 .DS_Store
+
+# AI Model file
+*.ptl
