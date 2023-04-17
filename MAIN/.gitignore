@@ -1,15 +1,35 @@
+# Android Studio IDE-specific files
+.idea/
 *.iml
-.gradle
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
-.DS_Store
-/build
-/captures
-.externalNativeBuild
-.cxx
+*.iws
+out/
+build/
+
+# Gradle-specific files
+.gradle/
+build/
+
+# Local configuration file (sdk path, etc)
 local.properties
+
+# Generated files
+bin/
+gen/
+
+# Android build files
+*.apk
+*.ap_
+
+# ProGuard files
+proguard/
+
+# Log files
+*.log
+
+# IntelliJ-specific files
+*.ipr
+*.iws
+*.iml
+
+# Mac-specific files
+.DS_Store
