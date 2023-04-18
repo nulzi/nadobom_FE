@@ -7,9 +7,11 @@ import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.graphics.YuvImage;
 import android.media.Image;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.TextureView;
 import android.view.ViewStub;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
@@ -28,7 +30,9 @@ import java.util.ArrayList;
 
 public class ObjectDetectionActivity extends AbstractCameraXActivity<ObjectDetectionActivity.AnalysisResult> {
     private Module mModule = null;
+    // 객체 탐지 결과 화면
     private ResultView mResultView;
+    private TextView mLiveText;
 
     static class AnalysisResult {
         private final ArrayList<Result> mResults;
@@ -38,6 +42,12 @@ public class ObjectDetectionActivity extends AbstractCameraXActivity<ObjectDetec
         }
     }
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mLiveText = findViewById(R.id.liveText);
+        mLiveText.setText("장애물 탐색 중");
+    }
     @Override
     protected int getContentViewLayoutId() {
         return R.layout.activity_object_detection;
@@ -50,11 +60,20 @@ public class ObjectDetectionActivity extends AbstractCameraXActivity<ObjectDetec
                 .inflate()
                 .findViewById(R.id.object_detection_texture_view);
     }
+    private String makeResultText(ArrayList<Result> results) {
+        String location1 = results.get(0).rect.right < 360 ? "좌측: " : results.get(0).rect.right > 780 ? "우측: " : "정면: ";
+        String result1 = location1 + PrePostProcessor.mClasses[results.get(0).classIndex];
+        String location2 = results.get(1).rect.right < 360 ? "좌측: " : results.get(1).rect.right > 780 ? "우측: " : "정면: ";
+        String result2 = location2 + PrePostProcessor.mClasses[results.get(1).classIndex];
+        final String resultText = result1 + ", " + result2;
+        return resultText;
+    }
 
     @Override
     protected void applyToUiAnalyzeImageResult(AnalysisResult result) {
         mResultView.setResults(result.mResults);
         mResultView.invalidate();
+        if(!result.mResults.isEmpty()) mLiveText.setText(makeResultText(result.mResults));
     }
 
     private Bitmap imgToBitmap(Image image) {
