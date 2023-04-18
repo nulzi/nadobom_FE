@@ -38,7 +38,7 @@ public class PrePostProcessor {
     private static int mOutputRow = 25200; // as decided by the YOLOv5 model for input image of size 640*640
     private static int mOutputColumn = 11; // left, top, right, bottom, score and 80 class probability
     private static float mThreshold = 0.35f; // score above which a detection is generated
-    private static int mNmsLimit = 5;
+    private static int mNmsLimit = 2;
 
     static String[] mClasses;
 
