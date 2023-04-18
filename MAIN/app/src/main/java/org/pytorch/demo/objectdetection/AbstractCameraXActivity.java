@@ -46,7 +46,6 @@ public abstract class AbstractCameraXActivity<R> extends BaseModuleActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(getContentViewLayoutId());
-
         startBackgroundThread();
 
         //권한이 없으면 권한 요청 있으면 setupCameraX()
@@ -96,12 +95,13 @@ public abstract class AbstractCameraXActivity<R> extends BaseModuleActivity {
             }
             final R result = analyzeImage(image, rotationDegrees);
             if (result != null) {
-                if (SystemClock.elapsedRealtime() - captureTime < 30000) {
+                if (SystemClock.elapsedRealtime() - captureTime > 10000) {
+                    Log.e("CapTime","realtime : "+SystemClock.elapsedRealtime()+", captime : "+captureTime);
                     // 카메라 캡쳐 5분마다
                     saveImageToJpeg(textureView.getBitmap(),SystemClock.elapsedRealtime());
+                    captureTime = SystemClock.elapsedRealtime();
                 }
                 mLastAnalysisResultTime = SystemClock.elapsedRealtime();
-                captureTime = SystemClock.elapsedRealtime();
                 runOnUiThread(() -> applyToUiAnalyzeImageResult(result));
             }
         });
