@@ -114,23 +114,39 @@ public class ObjectDetectionActivity extends AbstractCameraXActivity<ObjectDetec
         File[] files = file.listFiles();
 
         for(File tempFile : files){
-            Log.d("MyTag", tempFile.getName());
-
             if(tempFile.getName().contains("_od")){
                 ods.add(tempFile.getName());
             }
         }
 
         Log.e("MyTag","ods size : " + ods.size());
+        String path = getCacheDir() + "/";
+        if(ods.size() > 1){
+            deleteImg(path+ods.get(0));
+            ods.remove(0);
+        }
         if(ods.size() > 0){
-            int randomPosition = new Random().nextInt(ods.size());
-
-            String path = getCacheDir() + "/" + ods.get(randomPosition);
-
+            path = path + ods.get(0);
             Bitmap bitmap = BitmapFactory.decodeFile(path);
             return bitmap;
         }
         return null;
+    }
+    private void deleteImg(String path){
+        File file = new File(path);
+        if (file.exists()) {
+            boolean isDeleted = file.delete();
+            if (isDeleted) {
+                // 파일 삭제 성공
+                Log.e("MyTag","delete complete");
+            } else {
+                // 파일 삭제 실패
+                Log.e("MyTag","delete fail");
+            }
+        } else {
+            // 파일이 존재하지 않음
+            Log.e("MyTag","file not exist");
+        }
     }
 
     private String makeResultText(ArrayList<Result> results) {
@@ -186,7 +202,7 @@ public class ObjectDetectionActivity extends AbstractCameraXActivity<ObjectDetec
             FileOutputStream out = new FileOutputStream(tempFile);
 
             image.compress(Bitmap.CompressFormat.JPEG, 100, out);
-            Log.e("MyTag", "success to save img");
+            
             out.close();
         } catch (FileNotFoundException e) {
             Log.e("MyTag","FileNotFoundException : " + e.getMessage());
