@@ -8,8 +8,10 @@ package org.pytorch.demo.objectdetection;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.util.Log;
 import android.util.Size;
 import android.view.TextureView;
 import android.widget.Toast;
@@ -30,10 +32,15 @@ public abstract class AbstractCameraXActivity<R> extends BaseModuleActivity {
     private static final String[] PERMISSIONS = {Manifest.permission.CAMERA};
 
     private long mLastAnalysisResultTime;
+    private long captureTime;
 
+    // 상속 받은 자식이 원하는 view로 출력하도록 설정
     protected abstract int getContentViewLayoutId();
 
+    // 상속 받은 자식이 원하는 preview 설정
     protected abstract TextureView getCameraPreviewTextureView();
+
+    protected abstract void saveImageToJpeg(Bitmap image, long time);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +49,7 @@ public abstract class AbstractCameraXActivity<R> extends BaseModuleActivity {
 
         startBackgroundThread();
 
+        //권한이 없으면 권한 요청 있으면 setupCameraX()
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
             != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(
@@ -86,10 +94,14 @@ public abstract class AbstractCameraXActivity<R> extends BaseModuleActivity {
             if (SystemClock.elapsedRealtime() - mLastAnalysisResultTime < 5000) {
                 return;
             }
-
             final R result = analyzeImage(image, rotationDegrees);
             if (result != null) {
+                if (SystemClock.elapsedRealtime() - captureTime < 30000) {
+                    // 카메라 캡쳐 5분마다
+                    saveImageToJpeg(textureView.getBitmap(),SystemClock.elapsedRealtime());
+                }
                 mLastAnalysisResultTime = SystemClock.elapsedRealtime();
+                captureTime = SystemClock.elapsedRealtime();
                 runOnUiThread(() -> applyToUiAnalyzeImageResult(result));
             }
         });
