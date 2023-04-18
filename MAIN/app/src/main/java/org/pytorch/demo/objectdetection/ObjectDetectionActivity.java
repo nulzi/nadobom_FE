@@ -8,6 +8,9 @@ import android.graphics.Rect;
 import android.graphics.YuvImage;
 import android.media.Image;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.TextureView;
 import android.view.ViewStub;
@@ -27,12 +30,14 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class ObjectDetectionActivity extends AbstractCameraXActivity<ObjectDetectionActivity.AnalysisResult> {
     private Module mModule = null;
     // 객체 탐지 결과 화면
     private ResultView mResultView;
     private TextView mLiveText;
+    private TextToSpeech textToSpeech;
 
     static class AnalysisResult {
         private final ArrayList<Result> mResults;
@@ -45,8 +50,35 @@ public class ObjectDetectionActivity extends AbstractCameraXActivity<ObjectDetec
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        textToSpeech = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if (status != TextToSpeech.ERROR) {
+                    textToSpeech.setLanguage(Locale.KOREAN);
+                }
+            }
+        });
         mLiveText = findViewById(R.id.liveText);
         mLiveText.setText("장애물 탐색 중");
+        mLiveText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if (editable == null) Log.e("afterTextChanged", "null exception");
+                if (!editable.toString().equals("result") && !editable.toString().equals("장애물 탐색 중")) {
+                    textToSpeech.setPitch(1.0f);
+                    textToSpeech.setSpeechRate(1.0f);
+                    textToSpeech.speak(editable.toString(), TextToSpeech.QUEUE_FLUSH, null);
+                }
+            }
+        });        
     }
     @Override
     protected int getContentViewLayoutId() {
