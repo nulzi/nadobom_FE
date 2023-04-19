@@ -149,11 +149,10 @@ public class ObjectDetectionActivity extends AbstractCameraXActivity<ObjectDetec
         }
     }
 
-    private String makeResultText(ArrayList<Result> results) {
-        String location1 = results.get(0).rect.right < 360 ? "좌측: " : results.get(0).rect.right > 780 ? "우측: " : "정면: ";
-        String result1 = location1 + PrePostProcessor.mClasses[results.get(0).classIndex];
-        String location2 = results.get(1).rect.right < 360 ? "좌측: " : results.get(1).rect.right > 780 ? "우측: " : "정면: ";
-        String result2 = location2 + PrePostProcessor.mClasses[results.get(1).classIndex];
+    private String makeResultText(ArrayList<String> results) {
+        String result1 = results.get(0) + results.get(1);
+        String result2 = results.get(2) + results.get(3);
+        String count = results.get(4);
         final String resultText = result1 + ", " + result2;
         return resultText;
     }
@@ -162,8 +161,7 @@ public class ObjectDetectionActivity extends AbstractCameraXActivity<ObjectDetec
     protected void applyToUiAnalyzeImageResult(AnalysisResult result) {
         mResultView.setResults(result.mResults);
         mResultView.invalidate();
-        if(!result.mResults.isEmpty()) mLiveText.setText(makeResultText(result.mResults));
-        if(getBitmapFromCacheDir() != null) imageView.setImageBitmap(getBitmapFromCacheDir());
+        if(!result.mResults.isEmpty()) mLiveText.setText(makeResultText(Priority.priority(Priority.input(result.mResults),deviceWidth)));
     }
 
     private Bitmap imgToBitmap(Image image) {
