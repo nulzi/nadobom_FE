@@ -138,14 +138,14 @@ public class ObjectDetectionActivity extends AbstractCameraXActivity<ObjectDetec
             boolean isDeleted = file.delete();
             if (isDeleted) {
                 // 파일 삭제 성공
-                Log.e("MyTag","delete complete");
+                Log.e("MyTag","delete complete" + path);
             } else {
                 // 파일 삭제 실패
-                Log.e("MyTag","delete fail");
+                Log.e("MyTag","delete fail" + path);
             }
         } else {
             // 파일이 존재하지 않음
-            Log.e("MyTag","file not exist");
+            Log.e("MyTag","file not exist" + path);
         }
     }
 
