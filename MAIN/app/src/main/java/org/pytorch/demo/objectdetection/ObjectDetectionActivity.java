@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
 import android.graphics.Matrix;
+import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.YuvImage;
 import android.media.Image;
@@ -12,6 +13,7 @@ import android.speech.tts.TextToSpeech;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Display;
 import android.view.TextureView;
 import android.view.ViewStub;
 import android.widget.ImageView;
@@ -35,7 +37,6 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Locale;
-import java.util.Random;
 
 // 이와 같이 <타입>이 가능한 이유는 해당 클래스가 static 클래스이기 때문이다.
 public class ObjectDetectionActivity extends AbstractCameraXActivity<ObjectDetectionActivity.AnalysisResult> {
@@ -45,6 +46,8 @@ public class ObjectDetectionActivity extends AbstractCameraXActivity<ObjectDetec
     private TextView mLiveText;
     private TextToSpeech textToSpeech;
     private ImageView imageView;
+    private int deviceWidth;
+    private int deviceHeight;
 
     // 탐지 결과 저장 클래스
     static class AnalysisResult {
@@ -58,6 +61,11 @@ public class ObjectDetectionActivity extends AbstractCameraXActivity<ObjectDetec
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getRealSize(size);
+        deviceWidth = size.x;
+        deviceHeight = size.y;
         textToSpeech = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int status) {
@@ -106,7 +114,7 @@ public class ObjectDetectionActivity extends AbstractCameraXActivity<ObjectDetec
                 .findViewById(R.id.object_detection_texture_view);
     }
     @Nullable
-    private Bitmap getBitmapFromCacheDir(){
+    private File getFileFromCacheDir(){
         ArrayList<String> ods = new ArrayList<>();
 
         File file = new File(getCacheDir().toString());
@@ -119,19 +127,36 @@ public class ObjectDetectionActivity extends AbstractCameraXActivity<ObjectDetec
             }
         }
 
-        Log.e("MyTag","ods size : " + ods.size());
+//        Log.e("MyTag","ods size : " + ods.size());
         String path = getCacheDir() + "/";
+        // 서버로 보낸 이미지 삭제
         if(ods.size() > 1){
-            deleteImg(path+ods.get(0));
-            ods.remove(0);
+            deleteImg(path+ods.get(1));
+            ods.remove(1);
         }
         if(ods.size() > 0){
-            path = path + ods.get(0);
-            Bitmap bitmap = BitmapFactory.decodeFile(path);
-            return bitmap;
+            return new File(getCacheDir(),ods.get(0));
         }
         return null;
     }
+    private ArrayList<String> normalization(ArrayList<Result> results, int deviceWidth, int deviceHeight) {
+        ArrayList<String> list = new ArrayList<>();
+        for (Result result : results) {
+            double x = result.rect.left / (double) deviceWidth;
+            double y = (deviceHeight - result.rect.bottom) / (double) deviceHeight;
+            double w = (result.rect.right - result.rect.left) / (double) deviceWidth;
+            double h = (result.rect.bottom - result.rect.top) / (double) deviceHeight;
+            list.add(result.classIndex + " " + x + " " + y + " " + w + " " + h);
+        }
+        return list;
+    }
+    @Override
+    protected void sendData(AnalysisResult result) {
+        File file = getFileFromCacheDir();
+        ArrayList<String> resultList = normalization(result.mResults,deviceWidth,deviceHeight);
+        if(file != null) API.obstacleDataTransfer(file,resultList);
+    }
+
     private void deleteImg(String path){
         File file = new File(path);
         if (file.exists()) {

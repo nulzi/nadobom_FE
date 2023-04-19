@@ -41,6 +41,7 @@ public abstract class AbstractCameraXActivity<R> extends BaseModuleActivity {
     protected abstract TextureView getCameraPreviewTextureView();
 
     protected abstract void saveImageToJpeg(Bitmap image, long time);
+    protected abstract void sendData(R result);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,10 +96,10 @@ public abstract class AbstractCameraXActivity<R> extends BaseModuleActivity {
             }
             final R result = analyzeImage(image, rotationDegrees);
             if (result != null) {
-                if (SystemClock.elapsedRealtime() - captureTime > 10000) {
-                    Log.e("CapTime","realtime : "+SystemClock.elapsedRealtime()+", captime : "+captureTime);
-                    // 카메라 캡쳐 5분마다
+                // 카메라 캡쳐 5분마다
+                if (SystemClock.elapsedRealtime() - captureTime > 20000) {
                     saveImageToJpeg(textureView.getBitmap(),SystemClock.elapsedRealtime());
+                    sendData(result);
                     captureTime = SystemClock.elapsedRealtime();
                 }
                 mLastAnalysisResultTime = SystemClock.elapsedRealtime();
