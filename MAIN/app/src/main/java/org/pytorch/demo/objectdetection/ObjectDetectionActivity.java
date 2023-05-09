@@ -96,6 +96,11 @@ public class ObjectDetectionActivity extends AbstractCameraXActivity<ObjectDetec
             }
         });
         imageView = findViewById(R.id.imageView);
+
+    @Override
+    protected void onDestroy() {
+        resetCacheDir();
+        super.onDestroy();
     }
 
     // 최종 화면 선택
@@ -113,6 +118,20 @@ public class ObjectDetectionActivity extends AbstractCameraXActivity<ObjectDetec
                 .inflate()
                 .findViewById(R.id.object_detection_texture_view);
     }
+
+    private void resetCacheDir() {
+        File file = new File(getCacheDir().toString());
+
+        File[] files = file.listFiles();
+
+        String path = getCacheDir() + "/";
+        for (File tempFile : files) {
+            if (tempFile.getName().contains("_od")) {
+                deleteImg(path + tempFile.getName());
+            }
+        }
+    }
+
     @Nullable
     private File getFileFromCacheDir(){
         ArrayList<String> ods = new ArrayList<>();
