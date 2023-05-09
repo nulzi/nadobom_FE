@@ -1,6 +1,6 @@
-truck
-bollard
-movable_signage
-bicycle
-barricade
-scooter
+트럭
+볼라드
+이동식 간판
+자전거
+바리케이드
+킥보드
