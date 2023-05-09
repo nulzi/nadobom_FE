@@ -231,7 +231,9 @@ public class ObjectDetectionActivity extends AbstractCameraXActivity<ObjectDetec
     protected void applyToUiAnalyzeImageResult(AnalysisResult result) {
         mResultView.setResults(result.mResults);
         mResultView.invalidate();
-        if(!result.mResults.isEmpty()) mLiveText.setText(makeResultText(Priority.priority(Priority.input(result.mResults),deviceWidth)));
+        if (!result.mResults.isEmpty())
+            mLiveText.setText(makeResultText(Priority.priority(Priority.input(result.mResults), viewWidth, viewHeight)));
+        else mLiveText.setText("장애물 탐색 중");
     }
 
     private Bitmap imgToBitmap(Image image) {
