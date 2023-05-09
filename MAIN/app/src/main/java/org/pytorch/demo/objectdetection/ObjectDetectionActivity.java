@@ -187,11 +187,13 @@ public class ObjectDetectionActivity extends AbstractCameraXActivity<ObjectDetec
         }
         return list;
     }
+
     @Override
     protected void sendData(AnalysisResult result) {
+        if (result.mResults.size() == 0) return;
         File file = getFileFromCacheDir();
-        ArrayList<String> resultList = normalization(result.mResults,deviceWidth,deviceHeight);
-        if(file != null) API.obstacleDataTransfer(file,resultList);
+        ArrayList<String> resultList = normalization(result.mResults, viewWidth, viewHeight);
+        if (file != null) API.obstacleDataTransfer(file, resultList);
     }
 
     private void deleteImg(String path){
