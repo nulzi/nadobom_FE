@@ -33,6 +33,8 @@ public abstract class AbstractCameraXActivity<R> extends BaseModuleActivity {
 
     private long mLastAnalysisResultTime;
     private long captureTime;
+    protected int viewWidth = 0;
+    protected int viewHeight = 0;
 
     // 상속 받은 자식이 원하는 view로 출력하도록 설정
     protected abstract int getContentViewLayoutId();
@@ -93,6 +95,10 @@ public abstract class AbstractCameraXActivity<R> extends BaseModuleActivity {
         imageAnalysis.setAnalyzer((image, rotationDegrees) -> {
             if (SystemClock.elapsedRealtime() - mLastAnalysisResultTime < 5000) {
                 return;
+            if (viewWidth == 0 && viewHeight == 0) {
+                Log.d("MyTag", "init view size");
+                viewWidth = textureView.getRight();
+                viewHeight = textureView.getBottom();
             }
             final R result = analyzeImage(image, rotationDegrees);
             if (result != null) {
