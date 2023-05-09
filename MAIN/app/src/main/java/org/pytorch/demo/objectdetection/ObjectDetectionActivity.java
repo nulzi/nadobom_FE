@@ -174,13 +174,15 @@ public class ObjectDetectionActivity extends AbstractCameraXActivity<ObjectDetec
         }
         return new File(getCacheDir(), ods.get(0));
     }
-    private ArrayList<String> normalization(ArrayList<Result> results, int deviceWidth, int deviceHeight) {
+
+    private ArrayList<String> normalization(ArrayList<Result> results, int viewWidth, int viewHeight) {
+//        Log.d("MyTag_normalization","size: "+viewWidth+", "+viewHeight);
         ArrayList<String> list = new ArrayList<>();
         for (Result result : results) {
-            double x = result.rect.left / (double) deviceWidth;
-            double y = (deviceHeight - result.rect.bottom) / (double) deviceHeight;
-            double w = (result.rect.right - result.rect.left) / (double) deviceWidth;
-            double h = (result.rect.bottom - result.rect.top) / (double) deviceHeight;
+            double x = (result.rect.left + result.rect.right) / (double) (viewWidth * 2);
+            double y = (result.rect.top + result.rect.bottom) / (double) (viewHeight * 2);
+            double w = (result.rect.right - result.rect.left) / (double) viewWidth;
+            double h = (result.rect.bottom - result.rect.top) / (double) viewHeight;
             list.add(result.classIndex + " " + x + " " + y + " " + w + " " + h);
         }
         return list;
