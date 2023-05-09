@@ -32,10 +32,10 @@ public class Priority {
         return list;
     }
 
-    private static String directions(double mid, int deviceWidth) {
+    private static String directions(double mid, int viewWidth) {
         String direction = "";
-        double left = deviceWidth / 5;
-        double right = deviceWidth * 4 / 5;
+        double left = viewWidth / 4;
+        double right = viewWidth * 3 / 4;
 
         if (mid < left) {
             direction = "좌측";
