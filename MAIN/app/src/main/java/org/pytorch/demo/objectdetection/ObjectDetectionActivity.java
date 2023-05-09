@@ -96,6 +96,13 @@ public class ObjectDetectionActivity extends AbstractCameraXActivity<ObjectDetec
             }
         });
         imageView = findViewById(R.id.imageView);
+        final Button endButton = findViewById(R.id.endButton);
+        endButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
     @Override
     protected void onDestroy() {
