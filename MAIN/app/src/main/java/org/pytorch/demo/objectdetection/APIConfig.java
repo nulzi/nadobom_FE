@@ -16,5 +16,5 @@ public interface APIConfig {
             @Part MultipartBody.Part image
     );
 
-    static final String BASE_URL = "http://13.125.241.44:8000/"; // 주소 입력 부분
+    static final String BASE_URL = "http://43.201.8.49:8000/"; // 주소 입력 부분
 }
