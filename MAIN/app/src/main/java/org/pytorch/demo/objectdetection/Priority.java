@@ -9,10 +9,13 @@ class Labels {
 }
 
 public class Priority {
-    private static int base_point_x = 0;
-    private static int base_point_y = 0;
+//    private static int base_point_x = 0;
+//    private static int base_point_y = 0;
 
-    private static double len(double x, double y) {
+    private static double len(double x, double y, int viewWidth, int viewHeight) {
+        double base_point_x = viewWidth/2;
+        double base_point_y = viewHeight;
+//        Log.d("MyTag_len","base: "+base_point_x+", "+base_point_y);
         return Math.sqrt(Math.pow((x - base_point_x), 2) + Math.pow((y - base_point_y), 2));
     }
 
