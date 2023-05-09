@@ -146,17 +146,26 @@ public class ObjectDetectionActivity extends AbstractCameraXActivity<ObjectDetec
             }
         }
 
+        if (ods.size() <= 0) return null;
 //        Log.e("MyTag","ods size : " + ods.size());
         String path = getCacheDir() + "/";
         // 서버로 보낸 이미지 삭제
-        if(ods.size() > 1){
-            deleteImg(path+ods.get(1));
-            ods.remove(1);
+        if (ods.size() > 1) {
+            long name1 = 0;
+            long name2 = 0;
+            String[] array = ods.get(0).split("_");
+            name1 = Long.parseLong(array[0]);
+            array = ods.get(1).split("_");
+            name2 = Long.parseLong(array[0]);
+            if (name1 < name2) {
+                deleteImg(path + ods.get(0));
+                ods.remove(0);
+            } else {
+                deleteImg(path + ods.get(1));
+                ods.remove(1);
+            }
         }
-        if(ods.size() > 0){
-            return new File(getCacheDir(),ods.get(0));
-        }
-        return null;
+        return new File(getCacheDir(), ods.get(0));
     }
     private ArrayList<String> normalization(ArrayList<Result> results, int deviceWidth, int deviceHeight) {
         ArrayList<String> list = new ArrayList<>();
