@@ -212,7 +212,8 @@ public class ObjectDetectionActivity extends AbstractCameraXActivity<ObjectDetec
         return BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
     }
     @Override
-    protected void saveImageToJpeg(Bitmap image, long time) {
+    protected long saveImageToJpeg(Bitmap image, long time, AnalysisResult result) {
+        if (result.mResults.size() <= 0) return time;
         File storage = getCacheDir();
         String timeString = Long.toString(time);
         String fileName = timeString + "_od.jpg";
@@ -228,10 +229,12 @@ public class ObjectDetectionActivity extends AbstractCameraXActivity<ObjectDetec
 
             out.close();
         } catch (FileNotFoundException e) {
-            Log.e("MyTag","FileNotFoundException : " + e.getMessage());
+            Log.e("MyTag", "FileNotFoundException : " + e.getMessage());
         } catch (IOException e) {
             Log.e("MyTag", "IOException : " + e.getMessage());
         }
+        sendData(result);
+        return SystemClock.elapsedRealtime();
     }
 
     @Override

@@ -42,7 +42,7 @@ public abstract class AbstractCameraXActivity<R> extends BaseModuleActivity {
     // 상속 받은 자식이 원하는 preview 설정
     protected abstract TextureView getCameraPreviewTextureView();
 
-    protected abstract void saveImageToJpeg(Bitmap image, long time);
+    protected abstract long saveImageToJpeg(Bitmap image, long time, R result);
     protected abstract void sendData(R result);
 
     @Override
@@ -107,6 +107,8 @@ public abstract class AbstractCameraXActivity<R> extends BaseModuleActivity {
                     saveImageToJpeg(textureView.getBitmap(),SystemClock.elapsedRealtime());
                     sendData(result);
                     captureTime = SystemClock.elapsedRealtime();
+                        captureTime = saveImageToJpeg(textureView.getBitmap(), SystemClock.elapsedRealtime(), result);
+//                        sendData(result);
                 }
                 mLastAnalysisResultTime = SystemClock.elapsedRealtime();
                 runOnUiThread(() -> applyToUiAnalyzeImageResult(result));
