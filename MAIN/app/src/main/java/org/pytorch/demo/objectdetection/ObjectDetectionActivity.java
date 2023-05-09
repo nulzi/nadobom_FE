@@ -203,11 +203,17 @@ public class ObjectDetectionActivity extends AbstractCameraXActivity<ObjectDetec
     }
 
     private String makeResultText(ArrayList<String> results) {
-        String result1 = results.get(0) + results.get(1);
-        String result2 = results.get(2) + results.get(3);
-        String count = results.get(4);
-        final String resultText = result1 + ", " + result2;
-        return resultText;
+        if (results.size() == 2) return results.get(0) + " " + results.get(1);
+        String location1 = results.get(0);
+        String result1 = results.get(1);
+        String location2 = results.get(2);
+        String result2 = results.get(3);
+//        String count = results.get(4);
+        Log.d("MyTag", location1 + " " + result1 + ", " + location2 + " " + result2);
+        if (location1.equals(location2) && result1.equals(result2))
+            return location1 + " " + result1 + " 2개";
+        if (location1.equals(location2)) return location1 + " " + result1 + ", 그리고 " + result2;
+        return location1 + " " + result1 + ", " + location2 + " " + result2;
     }
 
     @Override
