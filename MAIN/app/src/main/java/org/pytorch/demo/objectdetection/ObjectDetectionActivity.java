@@ -74,6 +74,13 @@ public class ObjectDetectionActivity extends AbstractCameraXActivity<ObjectDetec
                 }
             }
         });
+        final Button helpButton = findViewById(R.id.helpButton);
+        Boolean option_helpOption = sharedPreferences.getBoolean("helpOption",SettingOption.helpOption);
+        if (!option_helpOption) helpButton.setVisibility(View.INVISIBLE);
+        else {
+            helpButton.setVisibility(View.VISIBLE);
+        }
+
         mLiveText = findViewById(R.id.liveText);
         mLiveText.setText("장애물 탐색 중");
         mLiveText.addTextChangedListener(new TextWatcher() {

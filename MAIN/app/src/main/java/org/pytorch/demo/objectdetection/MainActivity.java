@@ -33,7 +33,9 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements Runnable {
 
+    private AlertDialog helpDialog;
     private SharedPreferences sharedPreferences;
+    private Button helpButton;
 
     public static String assetFilePath(Context context, String assetName) throws IOException {
         File file = new File(context.getFilesDir(), assetName);
@@ -77,7 +79,17 @@ public class MainActivity extends AppCompatActivity implements Runnable {
             editor.putBoolean("helpOption",SettingOption.helpOption);
             editor.commit();
         }
+        helpButton = findViewById(R.id.helpButton);
+        Boolean helpOption = sharedPreferences.getBoolean("helpOption",true);
+        if (!helpOption) helpButton.setVisibility(View.INVISIBLE);
+        else {
+            helpButton.setVisibility(View.VISIBLE);
+            showHelpDialog();
+        }
+        helpButton.setOnClickListener(new View.OnClickListener() {
+            @Override
             public void onClick(View v) {
+                showHelpDialog();
             }
         });
 
@@ -111,6 +123,32 @@ public class MainActivity extends AppCompatActivity implements Runnable {
     }
 
     @Override
+    private void showHelpDialog() {
+        if(textToSpeech.isSpeaking()) textToSpeech.stop();
+        Float option_speechSpeed = sharedPreferences.getFloat("speechSpeed",SettingOption.speechSpeed);
+        final View view = LayoutInflater.from(this).inflate(R.layout.help_dialog, findViewById(R.id.helpDialog));
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this).setView(view);
+        TextView helpView = view.findViewById(R.id.helpText);
+        helpView.setText("다음은 메인 화면 도움말입니다 장애물 탐지 시작버튼, 길이 불편할 때 신고할 수 있는 신고버튼, 설정을 위한 설정버튼이 있습니다");
+        textToSpeech.setSpeechRate(option_speechSpeed);
+        textToSpeech.speak(helpView.getText(), TextToSpeech.QUEUE_ADD, null, "helpComment");
+
+        if(helpDialog == null) helpDialog = builder.create();
+
+        if(!helpDialog.isShowing()) helpDialog.show();
+        view.findViewById(R.id.replayBtn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(textToSpeech.isSpeaking()) textToSpeech.stop();
+                textToSpeech.speak(helpView.getText(), TextToSpeech.QUEUE_FLUSH, null, "helpComment");
+            }
+        });
+        view.findViewById(R.id.closeBtn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                textToSpeech.stop();
+                helpDialog.dismiss();
+            }
         });
     }
 }
