@@ -1,9 +1,13 @@
 <resources>
-    <string name="app_name">YOLOv5</string>
-    <string name="image_view">Image View</string>
+    <string name="app_name">나도봄</string>
+    <string name="main_icon">Main Icon</string>
     <string name="detect">Detect</string>
     <string name="run_model">Running the model...</string>
     <string name="restart">Restart</string>
     <string name="select">Select</string>
-    <string name="live">Live</string>
+    <string name="live">시작</string>
+    <string name="end">종료</string>
+    <string name="report">신고</string>
+    <string name="set">설정</string>
+    <string name="help">도움말</string>
 </resources>
