@@ -4,19 +4,19 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
 import android.graphics.Matrix;
-import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.YuvImage;
 import android.media.Image;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.speech.tts.TextToSpeech;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.Display;
 import android.view.TextureView;
+import android.view.View;
 import android.view.ViewStub;
-import android.widget.ImageView;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -45,9 +45,6 @@ public class ObjectDetectionActivity extends AbstractCameraXActivity<ObjectDetec
     private ResultView mResultView;
     private TextView mLiveText;
     private TextToSpeech textToSpeech;
-    private ImageView imageView;
-    private int deviceWidth;
-    private int deviceHeight;
 
     // 탐지 결과 저장 클래스
     static class AnalysisResult {
@@ -61,12 +58,7 @@ public class ObjectDetectionActivity extends AbstractCameraXActivity<ObjectDetec
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Display display = getWindowManager().getDefaultDisplay();
-        Point size = new Point();
-        display.getRealSize(size);
-        deviceWidth = size.x;
-        deviceHeight = size.y;
-        textToSpeech = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
+       textToSpeech = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int status) {
                 if (status != TextToSpeech.ERROR) {
@@ -74,6 +66,8 @@ public class ObjectDetectionActivity extends AbstractCameraXActivity<ObjectDetec
                 }
             }
         });
+        textToSpeech.speak("탐색을 시작하겠습니다.", TextToSpeech.QUEUE_FLUSH, null, "mainComment");
+
         final Button helpButton = findViewById(R.id.helpButton);
         Boolean option_helpOption = sharedPreferences.getBoolean("helpOption",SettingOption.helpOption);
         if (!option_helpOption) helpButton.setVisibility(View.INVISIBLE);
@@ -96,13 +90,10 @@ public class ObjectDetectionActivity extends AbstractCameraXActivity<ObjectDetec
             public void afterTextChanged(Editable editable) {
                 if (editable == null) Log.e("afterTextChanged", "null exception");
                 if (!editable.toString().equals("result") && !editable.toString().equals("장애물 탐색 중")) {
-                    textToSpeech.setPitch(1.0f);
-                    textToSpeech.setSpeechRate(1.0f);
-                    textToSpeech.speak(editable.toString(), TextToSpeech.QUEUE_FLUSH, null);
+                    textToSpeech.speak(editable.toString(), TextToSpeech.QUEUE_FLUSH, null, null);
                 }
             }
         });
-        imageView = findViewById(R.id.imageView);
         final Button endButton = findViewById(R.id.endButton);
         endButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -110,9 +101,11 @@ public class ObjectDetectionActivity extends AbstractCameraXActivity<ObjectDetec
                 finish();
             }
         });
+    }
 
     @Override
     protected void onDestroy() {
+        textToSpeech.stop();
         resetCacheDir();
         super.onDestroy();
     }
@@ -161,7 +154,6 @@ public class ObjectDetectionActivity extends AbstractCameraXActivity<ObjectDetec
         }
 
         if (ods.size() <= 0) return null;
-//        Log.e("MyTag","ods size : " + ods.size());
         String path = getCacheDir() + "/";
         // 서버로 보낸 이미지 삭제
         if (ods.size() > 1) {
@@ -183,7 +175,6 @@ public class ObjectDetectionActivity extends AbstractCameraXActivity<ObjectDetec
     }
 
     private ArrayList<String> normalization(ArrayList<Result> results, int viewWidth, int viewHeight) {
-//        Log.d("MyTag_normalization","size: "+viewWidth+", "+viewHeight);
         ArrayList<String> list = new ArrayList<>();
         for (Result result : results) {
             double x = (result.rect.left + result.rect.right) / (double) (viewWidth * 2);

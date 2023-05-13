@@ -14,12 +14,15 @@ import androidx.core.content.ContextCompat;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-
+import android.widget.TextView;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -30,9 +33,11 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
-public class MainActivity extends AppCompatActivity implements Runnable {
+public class MainActivity extends AppCompatActivity implements TextToSpeech.OnInitListener {
 
+    public static TextToSpeech textToSpeech;
     private AlertDialog helpDialog;
     private SharedPreferences sharedPreferences;
     private Button helpButton;
@@ -79,6 +84,7 @@ public class MainActivity extends AppCompatActivity implements Runnable {
             editor.putBoolean("helpOption",SettingOption.helpOption);
             editor.commit();
         }
+        textToSpeech = new TextToSpeech(this, this);
         helpButton = findViewById(R.id.helpButton);
         Boolean helpOption = sharedPreferences.getBoolean("helpOption",true);
         if (!helpOption) helpButton.setVisibility(View.INVISIBLE);
@@ -96,11 +102,22 @@ public class MainActivity extends AppCompatActivity implements Runnable {
         final Button buttonLive = findViewById(R.id.liveButton);
         buttonLive.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                if (textToSpeech != null && textToSpeech.isSpeaking()) {
+                    textToSpeech.stop();
+                }
               final Intent intent = new Intent(MainActivity.this, ObjectDetectionActivity.class);
               startActivity(intent);
             }
         });
+        final Button buttonSet = findViewById(R.id.setButton);
+        buttonSet.setOnClickListener(new View.OnClickListener() {
+            @Override
             public void onClick(View v) {
+                if (textToSpeech != null && textToSpeech.isSpeaking()) {
+                    textToSpeech.stop();
+                }
+                final Intent intent = new Intent(MainActivity.this, SettingActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -120,9 +137,36 @@ public class MainActivity extends AppCompatActivity implements Runnable {
     }
 
     @Override
+    public void onInit(int status) {
+        if (status == TextToSpeech.SUCCESS) {
+            Float option_speechSpeed = sharedPreferences.getFloat("speechSpeed",SettingOption.speechSpeed);
+            Boolean option_helpOption = sharedPreferences.getBoolean("helpOption",SettingOption.helpOption);
+            textToSpeech.setLanguage(Locale.KOREAN);
+            textToSpeech.setPitch(1.0f);
+            textToSpeech.setSpeechRate(option_speechSpeed);
+            textToSpeech.speak("반갑습니다 나도봄 시작 화면입니다.", TextToSpeech.QUEUE_FLUSH, null, "startComment");
+            if (option_helpOption) showHelpDialog();
+            Log.e("MyTag", "TTS success");
+        } else Log.e("MyTag", "TTS initialization fail");
     }
 
     @Override
+    protected void onResume() {
+        // 다시 화면으로 돌아올 때 동작
+        if (textToSpeech != null) {
+            Boolean helpOption = sharedPreferences.getBoolean("helpOption",true);
+            if (!helpOption) helpButton.setVisibility(View.INVISIBLE);
+            else {
+                helpButton.setVisibility(View.VISIBLE);
+            }
+            Float option_speechSpeed = sharedPreferences.getFloat("speechSpeed",SettingOption.speechSpeed);
+            textToSpeech.setSpeechRate(option_speechSpeed);
+            textToSpeech.speak("반갑습니다. 나도봄 시작 화면입니다.", TextToSpeech.QUEUE_FLUSH, null, "startComment");
+        }
+        else Log.e("MyTag","textToSpeech is null");
+        super.onResume();
+    }
+
     private void showHelpDialog() {
         if(textToSpeech.isSpeaking()) textToSpeech.stop();
         Float option_speechSpeed = sharedPreferences.getFloat("speechSpeed",SettingOption.speechSpeed);
