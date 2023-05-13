@@ -33,6 +33,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements Runnable {
 
+    private SharedPreferences sharedPreferences;
 
     public static String assetFilePath(Context context, String assetName) throws IOException {
         File file = new File(context.getFilesDir(), assetName);
@@ -64,8 +65,18 @@ public class MainActivity extends AppCompatActivity implements Runnable {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, 1);
         }
-
         setContentView(R.layout.activity_main);
+        sharedPreferences = getSharedPreferences("settingOption",MODE_PRIVATE);
+        // 설정 옵션 초기화
+        if(sharedPreferences.getAll().size() == 0){
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putFloat("speechSpeed",SettingOption.speechSpeed);
+            editor.putLong("odTime",SettingOption.odTime);
+            editor.putLong("captureTime",SettingOption.captureTime);
+            editor.putInt("textSize",SettingOption.textSize);
+            editor.putBoolean("helpOption",SettingOption.helpOption);
+            editor.commit();
+        }
             public void onClick(View v) {
             }
         });
