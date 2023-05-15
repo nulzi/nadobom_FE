@@ -6,6 +6,7 @@
 
 package org.pytorch.demo.objectdetection;
 
+import androidx.annotation.Dimension;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -40,27 +41,12 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
     public static TextToSpeech textToSpeech;
     private AlertDialog helpDialog;
     private SharedPreferences sharedPreferences;
-    private Button helpButton;
-
-    public static String assetFilePath(Context context, String assetName) throws IOException {
-        File file = new File(context.getFilesDir(), assetName);
-        if (file.exists() && file.length() > 0) {
-            return file.getAbsolutePath();
-        }
-
-        try (InputStream is = context.getAssets().open(assetName)) {
-            try (OutputStream os = new FileOutputStream(file)) {
-                byte[] buffer = new byte[4 * 1024];
-                int read;
-                while ((read = is.read(buffer)) != -1) {
-                    os.write(buffer, 0, read);
-                }
-                os.flush();
-            }
-            return file.getAbsolutePath();
-        }
-    }
-
+    private Button btnHelp;
+    private Button btnLive;
+    private Button btnSetting;
+    private boolean option_help;
+    private float option_speechSpeed;
+    private int option_textSize;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,22 +71,23 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
             editor.commit();
         }
         textToSpeech = new TextToSpeech(this, this);
-        helpButton = findViewById(R.id.helpButton);
-        Boolean helpOption = sharedPreferences.getBoolean("helpOption",true);
-        if (!helpOption) helpButton.setVisibility(View.INVISIBLE);
+        btnHelp = findViewById(R.id.btn_help_start);
+        option_help = sharedPreferences.getBoolean("helpOption",SettingOption.helpOption);
+        if (!option_help) btnHelp.setVisibility(View.INVISIBLE);
         else {
-            helpButton.setVisibility(View.VISIBLE);
+            btnHelp.setVisibility(View.VISIBLE);
             showHelpDialog();
         }
-        helpButton.setOnClickListener(new View.OnClickListener() {
+        btnHelp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showHelpDialog();
             }
         });
 
-        final Button buttonLive = findViewById(R.id.liveButton);
-        buttonLive.setOnClickListener(new View.OnClickListener() {
+        btnLive = findViewById(R.id.btn_live);
+        btnLive.setTextSize(Dimension.SP,option_textSize);
+        btnLive.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (textToSpeech != null && textToSpeech.isSpeaking()) {
                     textToSpeech.stop();
@@ -109,8 +96,10 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
               startActivity(intent);
             }
         });
-        final Button buttonSet = findViewById(R.id.setButton);
-        buttonSet.setOnClickListener(new View.OnClickListener() {
+
+        btnSetting = findViewById(R.id.btn_setting);
+        btnSetting.setTextSize(Dimension.SP,option_textSize);
+        btnSetting.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (textToSpeech != null && textToSpeech.isSpeaking()) {
@@ -139,14 +128,13 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
     @Override
     public void onInit(int status) {
         if (status == TextToSpeech.SUCCESS) {
-            Float option_speechSpeed = sharedPreferences.getFloat("speechSpeed",SettingOption.speechSpeed);
-            Boolean option_helpOption = sharedPreferences.getBoolean("helpOption",SettingOption.helpOption);
+            option_speechSpeed = sharedPreferences.getFloat("speechSpeed",SettingOption.speechSpeed);
+            option_help = sharedPreferences.getBoolean("helpOption",SettingOption.helpOption);
             textToSpeech.setLanguage(Locale.KOREAN);
             textToSpeech.setPitch(1.0f);
             textToSpeech.setSpeechRate(option_speechSpeed);
             textToSpeech.speak("반갑습니다 나도봄 시작 화면입니다.", TextToSpeech.QUEUE_FLUSH, null, "startComment");
-            if (option_helpOption) showHelpDialog();
-            Log.e("MyTag", "TTS success");
+            if (option_help) showHelpDialog();
         } else Log.e("MyTag", "TTS initialization fail");
     }
 
@@ -154,12 +142,16 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
     protected void onResume() {
         // 다시 화면으로 돌아올 때 동작
         if (textToSpeech != null) {
-            Boolean helpOption = sharedPreferences.getBoolean("helpOption",true);
-            if (!helpOption) helpButton.setVisibility(View.INVISIBLE);
-            else {
-                helpButton.setVisibility(View.VISIBLE);
-            }
-            Float option_speechSpeed = sharedPreferences.getFloat("speechSpeed",SettingOption.speechSpeed);
+            option_help = sharedPreferences.getBoolean("helpOption",SettingOption.helpOption);
+            option_speechSpeed = sharedPreferences.getFloat("speechSpeed",SettingOption.speechSpeed);
+            option_textSize = sharedPreferences.getInt("textSize",SettingOption.textSize);
+
+            if (!option_help) btnHelp.setVisibility(View.INVISIBLE);
+            else btnHelp.setVisibility(View.VISIBLE);
+
+            btnLive.setTextSize(Dimension.SP,option_textSize);
+            btnSetting.setTextSize(Dimension.SP,option_textSize);
+
             textToSpeech.setSpeechRate(option_speechSpeed);
             textToSpeech.speak("반갑습니다. 나도봄 시작 화면입니다.", TextToSpeech.QUEUE_FLUSH, null, "startComment");
         }
@@ -169,7 +161,7 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
 
     private void showHelpDialog() {
         if(textToSpeech.isSpeaking()) textToSpeech.stop();
-        Float option_speechSpeed = sharedPreferences.getFloat("speechSpeed",SettingOption.speechSpeed);
+        option_speechSpeed = sharedPreferences.getFloat("speechSpeed",SettingOption.speechSpeed);
         final View view = LayoutInflater.from(this).inflate(R.layout.help_dialog, findViewById(R.id.helpDialog));
         final AlertDialog.Builder builder = new AlertDialog.Builder(this).setView(view);
         TextView helpView = view.findViewById(R.id.helpText);

@@ -1,5 +1,6 @@
 package org.pytorch.demo.objectdetection;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
@@ -19,6 +20,7 @@ import android.view.ViewStub;
 import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.annotation.Dimension;
 import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 import androidx.camera.core.ImageProxy;
@@ -34,17 +36,22 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Locale;
 
 // 이와 같이 <타입>이 가능한 이유는 해당 클래스가 static 클래스이기 때문이다.
-public class ObjectDetectionActivity extends AbstractCameraXActivity<ObjectDetectionActivity.AnalysisResult> {
+public class ObjectDetectionActivity extends AbstractCameraXActivity<ObjectDetectionActivity.AnalysisResult> implements TextToSpeech.OnInitListener {
     private Module mModule = null;
     // 객체 탐지 결과 화면
     private ResultView mResultView;
-    private TextView mLiveText;
     private TextToSpeech textToSpeech;
+    private TextView tvObstacle;
+    private Button btnHelp;
+    private Button btnReport;
+    private Button btnEnd;
 
     // 탐지 결과 저장 클래스
     static class AnalysisResult {
@@ -58,26 +65,20 @@ public class ObjectDetectionActivity extends AbstractCameraXActivity<ObjectDetec
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-       textToSpeech = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
-            @Override
-            public void onInit(int status) {
-                if (status != TextToSpeech.ERROR) {
-                    textToSpeech.setLanguage(Locale.KOREAN);
-                }
-            }
-        });
-        textToSpeech.speak("탐색을 시작하겠습니다.", TextToSpeech.QUEUE_FLUSH, null, "mainComment");
 
-        final Button helpButton = findViewById(R.id.helpButton);
-        Boolean option_helpOption = sharedPreferences.getBoolean("helpOption",SettingOption.helpOption);
-        if (!option_helpOption) helpButton.setVisibility(View.INVISIBLE);
+        textToSpeech = new TextToSpeech(this, this);
+
+        btnHelp = findViewById(R.id.btn_help_main);
+        boolean option_helpOption = sharedPreferences.getBoolean("helpOption",SettingOption.helpOption);
+        if (!option_helpOption) btnHelp.setVisibility(View.INVISIBLE);
         else {
-            helpButton.setVisibility(View.VISIBLE);
+            btnHelp.setVisibility(View.VISIBLE);
         }
 
-        mLiveText = findViewById(R.id.liveText);
-        mLiveText.setText("장애물 탐색 중");
-        mLiveText.addTextChangedListener(new TextWatcher() {
+        tvObstacle = findViewById(R.id.tv_obstacle);
+        tvObstacle.setText("장애물 탐색 중");
+        tvObstacle.setTextSize(Dimension.SP, sharedPreferences.getInt("textSize",SettingOption.textSize));
+        tvObstacle.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
             }
@@ -94,8 +95,19 @@ public class ObjectDetectionActivity extends AbstractCameraXActivity<ObjectDetec
                 }
             }
         });
-        final Button endButton = findViewById(R.id.endButton);
-        endButton.setOnClickListener(new View.OnClickListener() {
+
+        btnReport = findViewById(R.id.btn_report);
+        btnReport.setTextSize(Dimension.SP, sharedPreferences.getInt("textSize",SettingOption.textSize));
+        btnReport.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        btnEnd = findViewById(R.id.btn_end);
+        btnEnd.setTextSize(Dimension.SP, sharedPreferences.getInt("textSize",SettingOption.textSize));
+        btnEnd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
@@ -103,6 +115,16 @@ public class ObjectDetectionActivity extends AbstractCameraXActivity<ObjectDetec
         });
     }
 
+    @Override
+    public void onInit(int status) {
+        if (status == TextToSpeech.SUCCESS) {
+            float option_speechSpeed = sharedPreferences.getFloat("speechSpeed",SettingOption.speechSpeed);
+            textToSpeech.setLanguage(Locale.KOREAN);
+            textToSpeech.setPitch(1.0f);
+            textToSpeech.setSpeechRate(option_speechSpeed);
+            textToSpeech.speak("장애물 탐색을 시작하겠습니다.", TextToSpeech.QUEUE_FLUSH, null, "mainComment");
+        } else Log.e("MyTag", "TTS initialization fail");
+    }
     @Override
     protected void onDestroy() {
         textToSpeech.stop();
@@ -200,14 +222,14 @@ public class ObjectDetectionActivity extends AbstractCameraXActivity<ObjectDetec
             boolean isDeleted = file.delete();
             if (isDeleted) {
                 // 파일 삭제 성공
-                Log.e("MyTag","delete complete" + path);
+//                Log.e("MyTag","delete complete " + path);
             } else {
                 // 파일 삭제 실패
-                Log.e("MyTag","delete fail" + path);
+//                Log.e("MyTag","delete fail " + path);
             }
         } else {
             // 파일이 존재하지 않음
-            Log.e("MyTag","file not exist" + path);
+//            Log.e("MyTag","file not exist " + path);
         }
     }
 
@@ -230,8 +252,8 @@ public class ObjectDetectionActivity extends AbstractCameraXActivity<ObjectDetec
         mResultView.setResults(result.mResults);
         mResultView.invalidate();
         if (!result.mResults.isEmpty())
-            mLiveText.setText(makeResultText(Priority.priority(Priority.input(result.mResults), viewWidth, viewHeight)));
-        else mLiveText.setText("장애물 탐색 중");
+            tvObstacle.setText(makeResultText(Priority.priority(Priority.input(result.mResults), viewWidth, viewHeight)));
+        else tvObstacle.setText("장애물 탐색 중");
     }
 
     private Bitmap imgToBitmap(Image image) {
@@ -258,7 +280,7 @@ public class ObjectDetectionActivity extends AbstractCameraXActivity<ObjectDetec
     }
     @Override
     protected long saveImageToJpeg(Bitmap image, long time, AnalysisResult result) {
-        if (result.mResults.size() <= 0) return time;
+        if (result.mResults.size() <= 0 || image == null) return time;
         File storage = getCacheDir();
         String timeString = Long.toString(time);
         String fileName = timeString + "_od.jpg";
@@ -281,14 +303,31 @@ public class ObjectDetectionActivity extends AbstractCameraXActivity<ObjectDetec
         sendData(result);
         return SystemClock.elapsedRealtime();
     }
+    public static String assetFilePath(Context context, String assetName) throws IOException {
+        File file = new File(context.getFilesDir(), assetName);
+        if (file.exists() && file.length() > 0) {
+            return file.getAbsolutePath();
+        }
 
+        try (InputStream is = context.getAssets().open(assetName)) {
+            try (OutputStream os = new FileOutputStream(file)) {
+                byte[] buffer = new byte[4 * 1024];
+                int read;
+                while ((read = is.read(buffer)) != -1) {
+                    os.write(buffer, 0, read);
+                }
+                os.flush();
+            }
+            return file.getAbsolutePath();
+        }
+    }
     @Override
     @WorkerThread
     @Nullable
     protected AnalysisResult analyzeImage(ImageProxy image, int rotationDegrees) {
         try {
             if (mModule == null) {
-                mModule = LiteModuleLoader.load(MainActivity.assetFilePath(getApplicationContext(), "50v50508.torchscript.ptl"));
+                mModule = LiteModuleLoader.load(assetFilePath(getApplicationContext(), "50v50508.torchscript.ptl"));
             }
         } catch (IOException e) {
             Log.e("Object Detection", "Error reading assets", e);

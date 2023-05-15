@@ -7,7 +7,7 @@
     tools:context="org.pytorch.demo.objectdetection.MainActivity">
 
     <Button
-        android:id="@+id/helpButton"
+        android:id="@+id/btn_help_start"
         android:layout_width="50dp"
         android:layout_height="30dp"
         android:layout_marginTop="12dp"
@@ -20,7 +20,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
-        android:id="@+id/mainIcon"
+        android:id="@+id/icon_main"
         android:layout_width="0dp"
         android:layout_height="157.5dp"
         android:layout_marginTop="132dp"
@@ -33,7 +33,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/mainText"
+        android:id="@+id/tv_logo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="34dp"
@@ -42,51 +42,37 @@
         android:textColor="#db758c"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/mainIcon" />
+        app:layout_constraintTop_toBottomOf="@+id/icon_main" />
 
     <Button
-        android:id="@+id/liveButton"
+        android:id="@+id/btn_live"
         android:layout_width="270dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
+        android:layout_marginBottom="76dp"
         android:background="#000"
         android:text="@string/live"
         android:textAllCaps="false"
         android:textColor="#ff4778"
         android:textSize="32sp"
-        app:layout_constraintBottom_toTopOf="@+id/reportButton"
+        app:layout_constraintBottom_toBottomOf="@+id/btn_setting"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.496"
+        app:layout_constraintHorizontal_bias="0.503"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-        android:id="@+id/reportButton"
+        android:id="@+id/btn_setting"
         android:layout_width="270dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        android:background="#80000000"
-        android:text="@string/report"
-        android:textAllCaps="false"
-        android:textColor="#80ff4778"
-        android:textSize="32sp"
-        app:layout_constraintBottom_toTopOf="@+id/setButton"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.496"
-        app:layout_constraintStart_toStartOf="parent"
-        android:enabled="false" />
-
-    <Button
-        android:id="@+id/setButton"
-        android:layout_width="270dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="30dp"
+        android:background="#000000"
         android:text="@string/set"
         android:textAllCaps="false"
-        android:background="#000000"
         android:textColor="#ff4778"
         android:textSize="32sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"/>
+        app:layout_constraintHorizontal_bias="0.503"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_live"
+        app:layout_constraintVertical_bias="1.0" />
 </androidx.constraintlayout.widget.ConstraintLayout>

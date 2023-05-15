@@ -16,6 +16,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
+            android:id="@+id/tv_text_size"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
@@ -32,17 +33,17 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/smallTextSbtn"
+                android:id="@+id/setbtn_small_text"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_gravity="center"
                 android:background="#000"
                 android:textColor="#ff4778"
                 android:text="소"
-                android:textSize="24sp" />
+                android:textSize="28sp" />
 
             <Button
-                android:id="@+id/midTextSbtn"
+                android:id="@+id/setbtn_mid_text"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:layout_gravity="center"
@@ -53,7 +54,7 @@
                 android:textSize="32sp" />
 
             <Button
-                android:id="@+id/bigTextSbtn"
+                android:id="@+id/setbtn_big_text"
                 android:layout_width="70dp"
                 android:layout_height="70dp"
                 android:background="#000"
@@ -73,6 +74,7 @@
         app:layout_constraintTop_toBottomOf="@+id/linearLayout">
 
         <TextView
+            android:id="@+id/tv_speech_speed"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
@@ -89,7 +91,7 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/slowSpeedSbtn"
+                android:id="@+id/setbtn_slow"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -99,7 +101,7 @@
                 android:textSize="32sp" />
 
             <Button
-                android:id="@+id/normalSpeedSbtn"
+                android:id="@+id/setbtn_normal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -110,7 +112,7 @@
                 android:textSize="32sp" />
 
             <Button
-                android:id="@+id/fast1SpeedSbtn"
+                android:id="@+id/setbtn_fast1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -127,7 +129,7 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/fast2SpeedSbtn"
+                android:id="@+id/setbtn_fast2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -137,7 +139,7 @@
                 android:textSize="32sp" />
 
             <Button
-                android:id="@+id/fast3SpeedSbtn"
+                android:id="@+id/setbtn_fast3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -148,7 +150,7 @@
                 android:textSize="32sp" />
 
             <Button
-                android:id="@+id/fast4SpeedSbtn"
+                android:id="@+id/setbtn_fast4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -169,6 +171,7 @@
         app:layout_constraintTop_toBottomOf="@+id/linearLayout2">
 
         <TextView
+            android:id="@+id/tv_help_option"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
@@ -177,8 +180,9 @@
             android:textSize="32sp" />
 
         <Button
-            android:id="@+id/helpSbtn"
-            android:layout_width="70dp"
+
+            android:id="@+id/setbtn_help_option"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginHorizontal="20dp"
@@ -199,7 +203,7 @@
         app:layout_constraintTop_toBottomOf="@+id/linearLayout2">
 
         <TextView
-            android:id="@+id/appVersionText"
+            android:id="@+id/tv_app_version"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
