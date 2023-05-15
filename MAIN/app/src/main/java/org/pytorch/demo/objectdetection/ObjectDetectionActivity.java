@@ -52,6 +52,7 @@ public class ObjectDetectionActivity extends AbstractCameraXActivity<ObjectDetec
     private Button btnHelp;
     private Button btnReport;
     private Button btnEnd;
+    private boolean option_help;
 
     // 탐지 결과 저장 클래스
     static class AnalysisResult {
@@ -68,12 +69,18 @@ public class ObjectDetectionActivity extends AbstractCameraXActivity<ObjectDetec
 
         textToSpeech = new TextToSpeech(this, this);
 
+        option_help = sharedPreferences.getBoolean("helpOption",SettingOption.helpOption);
         btnHelp = findViewById(R.id.btn_help_main);
-        boolean option_helpOption = sharedPreferences.getBoolean("helpOption",SettingOption.helpOption);
-        if (!option_helpOption) btnHelp.setVisibility(View.INVISIBLE);
+        if (!option_help) btnHelp.setVisibility(View.INVISIBLE);
         else {
             btnHelp.setVisibility(View.VISIBLE);
         }
+        btnHelp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                textToSpeech.speak("다음은 장애물 탐지 화면 도움말입니다 장애물 안내텍스트, 신고를 위한 신고 버튼, 장애물 탐지 종료버튼이 있습니다", TextToSpeech.QUEUE_ADD, null, "helpComment");
+            }
+        });
 
         tvObstacle = findViewById(R.id.tv_obstacle);
         tvObstacle.setText("장애물 탐색 중");
@@ -123,6 +130,7 @@ public class ObjectDetectionActivity extends AbstractCameraXActivity<ObjectDetec
             textToSpeech.setPitch(1.0f);
             textToSpeech.setSpeechRate(option_speechSpeed);
             textToSpeech.speak("장애물 탐색을 시작하겠습니다.", TextToSpeech.QUEUE_FLUSH, null, "mainComment");
+            if (option_help) textToSpeech.speak("다음은 장애물 탐지 화면 도움말입니다 장애물 안내텍스트, 신고를 위한 신고 버튼, 장애물 탐지 종료버튼이 있습니다", TextToSpeech.QUEUE_ADD, null, "helpComment");
         } else Log.e("MyTag", "TTS initialization fail");
     }
     @Override
@@ -249,11 +257,13 @@ public class ObjectDetectionActivity extends AbstractCameraXActivity<ObjectDetec
 
     @Override
     protected void applyToUiAnalyzeImageResult(AnalysisResult result) {
-        mResultView.setResults(result.mResults);
-        mResultView.invalidate();
-        if (!result.mResults.isEmpty())
-            tvObstacle.setText(makeResultText(Priority.priority(Priority.input(result.mResults), viewWidth, viewHeight)));
-        else tvObstacle.setText("장애물 탐색 중");
+        if(!textToSpeech.isSpeaking()) {
+            mResultView.setResults(result.mResults);
+            mResultView.invalidate();
+            if (!result.mResults.isEmpty())
+                tvObstacle.setText(makeResultText(Priority.priority(Priority.input(result.mResults), viewWidth, viewHeight)));
+            else tvObstacle.setText("장애물 탐색 중");
+        }
     }
 
     private Bitmap imgToBitmap(Image image) {
