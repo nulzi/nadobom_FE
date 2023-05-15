@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
             @Override
             public void onClick(View v) {
                 if(textToSpeech.isSpeaking()) textToSpeech.stop();
-                textToSpeech.speak("다음은 메인 화면 도움말입니다 장애물 탐지 시작버튼, 설정을 위한 설정버튼이 있습니다", TextToSpeech.QUEUE_ADD, null, "helpComment");
+                textToSpeech.speak("다음은 시작 화면 도움말입니다 장애물 탐지 시작버튼, 설정을 위한 설정버튼이 있습니다", TextToSpeech.QUEUE_ADD, null, "helpComment");
             }
         });
 
@@ -123,8 +123,8 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
             textToSpeech.setLanguage(Locale.KOREAN);
             textToSpeech.setPitch(1.0f);
             textToSpeech.setSpeechRate(option_speechSpeed);
-            textToSpeech.speak("반갑습니다 나도봄 시작 화면입니다.", TextToSpeech.QUEUE_FLUSH, null, "startComment");
-            if (option_help) textToSpeech.speak("다음은 메인 화면 도움말입니다 장애물 탐지 시작버튼, 설정을 위한 설정버튼이 있습니다", TextToSpeech.QUEUE_ADD, null, "helpComment");
+            textToSpeech.speak("나도봄 시작 화면입니다.", TextToSpeech.QUEUE_FLUSH, null, "startComment");
+            if (option_help) textToSpeech.speak("다음은 시작 화면 도움말입니다 장애물 탐지 시작버튼, 설정을 위한 설정버튼이 있습니다", TextToSpeech.QUEUE_ADD, null, "helpComment");
         } else Log.e("MyTag", "TTS initialization fail");
     }
 
