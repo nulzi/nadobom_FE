@@ -7,31 +7,23 @@
 package org.pytorch.demo.objectdetection;
 
 import androidx.annotation.Dimension;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -39,7 +31,6 @@ import java.util.Locale;
 public class MainActivity extends AppCompatActivity implements TextToSpeech.OnInitListener {
 
     public static TextToSpeech textToSpeech;
-    private AlertDialog helpDialog;
     private SharedPreferences sharedPreferences;
     private Button btnHelp;
     private Button btnLive;
@@ -76,12 +67,12 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
         if (!option_help) btnHelp.setVisibility(View.INVISIBLE);
         else {
             btnHelp.setVisibility(View.VISIBLE);
-            showHelpDialog();
         }
         btnHelp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showHelpDialog();
+                if(textToSpeech.isSpeaking()) textToSpeech.stop();
+                textToSpeech.speak("다음은 메인 화면 도움말입니다 장애물 탐지 시작버튼, 설정을 위한 설정버튼이 있습니다", TextToSpeech.QUEUE_ADD, null, "helpComment");
             }
         });
 
@@ -134,7 +125,7 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
             textToSpeech.setPitch(1.0f);
             textToSpeech.setSpeechRate(option_speechSpeed);
             textToSpeech.speak("반갑습니다 나도봄 시작 화면입니다.", TextToSpeech.QUEUE_FLUSH, null, "startComment");
-            if (option_help) showHelpDialog();
+            if (option_help) textToSpeech.speak("다음은 메인 화면 도움말입니다 장애물 탐지 시작버튼, 설정을 위한 설정버튼이 있습니다", TextToSpeech.QUEUE_ADD, null, "helpComment");
         } else Log.e("MyTag", "TTS initialization fail");
     }
 
@@ -157,34 +148,5 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
         }
         else Log.e("MyTag","textToSpeech is null");
         super.onResume();
-    }
-
-    private void showHelpDialog() {
-        if(textToSpeech.isSpeaking()) textToSpeech.stop();
-        option_speechSpeed = sharedPreferences.getFloat("speechSpeed",SettingOption.speechSpeed);
-        final View view = LayoutInflater.from(this).inflate(R.layout.help_dialog, findViewById(R.id.helpDialog));
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this).setView(view);
-        TextView helpView = view.findViewById(R.id.helpText);
-        helpView.setText("다음은 메인 화면 도움말입니다 장애물 탐지 시작버튼, 길이 불편할 때 신고할 수 있는 신고버튼, 설정을 위한 설정버튼이 있습니다");
-        textToSpeech.setSpeechRate(option_speechSpeed);
-        textToSpeech.speak(helpView.getText(), TextToSpeech.QUEUE_ADD, null, "helpComment");
-
-        if(helpDialog == null) helpDialog = builder.create();
-
-        if(!helpDialog.isShowing()) helpDialog.show();
-        view.findViewById(R.id.replayBtn).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(textToSpeech.isSpeaking()) textToSpeech.stop();
-                textToSpeech.speak(helpView.getText(), TextToSpeech.QUEUE_FLUSH, null, "helpComment");
-            }
-        });
-        view.findViewById(R.id.closeBtn).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                textToSpeech.stop();
-                helpDialog.dismiss();
-            }
-        });
     }
 }
