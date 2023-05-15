@@ -34,22 +34,20 @@ public class Priority {
         }
         return list;
     }
-
-    private static String directions(double mid, int viewWidth) {
+    private static String directions(double mid_x, double mid_y, int viewWidth, int viewHeight) {
         String direction = "";
-        double left = viewWidth / 4;
-        double right = viewWidth * 3 / 4;
+        Double left_y = -viewHeight/(viewWidth*1.5/4 - viewWidth*1/5)*(mid_x-viewWidth*1/5);
+        Double right_y = viewHeight/(viewWidth*2.5/4 - (viewWidth*4/5))*(mid_x-(viewWidth*4/5));
 
-        if (mid < left) {
-            direction = "좌측";
+        if(left_y >= 0 && left_y <= viewHeight){
+            if(mid_y < left_y){direction = "좌측";}
+            else{direction = "정면";}
         }
-        else if (mid > right) {
-            direction = "우측";
+        else if(right_y >=0 && right_y <= viewHeight) {
+            if(mid_y < right_y){direction = "우측";}
+            else{direction = "정면";}
         }
-        else {
-            direction = "정면";
-        }
-
+        else{direction = "정면";}
         return direction;
     }
 
@@ -64,7 +62,7 @@ public class Priority {
 //        Log.d("MyTag_priority","size: "+viewWidth+", "+viewHeight);
         if(list.size() == 1){
             ArrayList<String> results = new ArrayList<>();
-            results.add(directions(list.get(0).x, viewWidth));
+            results.add(directions(list.get(0).x,list.get(0).y, viewWidth,viewHeight));
             results.add(list.get(0).name);
             return results;
         }
@@ -96,9 +94,9 @@ public class Priority {
 
         // 마지막에 첫 번째 물체의 방향 및 이름, 두 번째 물체의 방향 및 이름, 마지막으로 2개를 제외한 나머지 개수
         ArrayList<String> results = new ArrayList<>();
-        results.add(directions(list.get(firstIndex).x, viewWidth));
+        results.add(directions(list.get(firstIndex).x,list.get(firstIndex).y, viewWidth,viewHeight));
         results.add(list.get(firstIndex).name);
-        results.add(directions(list.get(secondIndex).x, viewWidth));
+        results.add(directions(list.get(secondIndex).x,list.get(secondIndex).y, viewWidth,viewHeight));
         results.add(list.get(secondIndex).name);
         results.add(Integer.toString(count - 2));
 
