@@ -120,7 +120,6 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
     public void onInit(int status) {
         if (status == TextToSpeech.SUCCESS) {
             option_speechSpeed = sharedPreferences.getFloat("speechSpeed",SettingOption.speechSpeed);
-            option_help = sharedPreferences.getBoolean("helpOption",SettingOption.helpOption);
             textToSpeech.setLanguage(Locale.KOREAN);
             textToSpeech.setPitch(1.0f);
             textToSpeech.setSpeechRate(option_speechSpeed);
