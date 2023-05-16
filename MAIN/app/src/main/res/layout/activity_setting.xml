@@ -95,68 +95,21 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:layout_marginRight="10dp"
                 android:background="#000"
                 android:textColor="#ff4778"
-                android:text="0.8배"
+                android:text="감소"
                 android:textSize="32sp" />
 
             <Button
-                android:id="@+id/setbtn_normal"
+                android:id="@+id/setbtn_fast"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginHorizontal="10dp"
+                android:layout_marginLeft="10dp"
                 android:background="#000"
                 android:textColor="#ff4778"
-                android:text="1.0배"
-                android:textSize="32sp" />
-
-            <Button
-                android:id="@+id/setbtn_fast1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:background="#000"
-                android:textColor="#ff4778"
-                android:text="1.2배"
-                android:textSize="32sp" />
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:gravity="center"
-            android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/setbtn_fast2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:background="#000"
-                android:textColor="#ff4778"
-                android:text="1.5배"
-                android:textSize="32sp" />
-
-            <Button
-                android:id="@+id/setbtn_fast3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginHorizontal="10dp"
-                android:background="#000"
-                android:textColor="#ff4778"
-                android:text="1.8배"
-                android:textSize="32sp" />
-
-            <Button
-                android:id="@+id/setbtn_fast4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:background="#000"
-                android:textColor="#ff4778"
-                android:text="2.0배"
+                android:text="증가"
                 android:textSize="32sp" />
         </LinearLayout>
     </LinearLayout>

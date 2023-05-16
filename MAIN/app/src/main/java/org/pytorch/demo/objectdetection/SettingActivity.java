@@ -25,12 +25,9 @@ public class SettingActivity extends AppCompatActivity implements TextToSpeech.O
     private Button sbtnMidText;
     private Button sbtnBigText;
     private Button stbnSlowSpeed;
-    private Button sbtnNormalSpeed;
-    private Button sbtnFast1Speed;
-    private Button sbtnFast2Speed;
-    private Button sbtnFast3Speed;
-    private Button sbtnFast4Speed;
+    private Button sbtnFastSpeed;
     private Button sbtnHelpOption;
+    private float option_speechSpeed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,11 +55,7 @@ public class SettingActivity extends AppCompatActivity implements TextToSpeech.O
                 tvSpeechSpeed.setTextSize(Dimension.SP,28);
                 tvHelpOption.setTextSize(Dimension.SP,28);
                 stbnSlowSpeed.setTextSize(Dimension.SP,28);
-                sbtnNormalSpeed.setTextSize(Dimension.SP,28);
-                sbtnFast1Speed.setTextSize(Dimension.SP,28);
-                sbtnFast2Speed.setTextSize(Dimension.SP,28);
-                sbtnFast3Speed.setTextSize(Dimension.SP,28);
-                sbtnFast4Speed.setTextSize(Dimension.SP,28);
+                sbtnFastSpeed.setTextSize(Dimension.SP,28);
                 sbtnHelpOption.setTextSize(Dimension.SP,28);
                 if(textToSpeech.isSpeaking()) textToSpeech.stop();
                 textToSpeech.speak("작은 글씨 크기로 설정합니다",TextToSpeech.QUEUE_FLUSH,null,"setSpeechSpeed");
@@ -79,11 +72,7 @@ public class SettingActivity extends AppCompatActivity implements TextToSpeech.O
                 tvSpeechSpeed.setTextSize(Dimension.SP,32);
                 tvHelpOption.setTextSize(Dimension.SP,32);
                 stbnSlowSpeed.setTextSize(Dimension.SP,32);
-                sbtnNormalSpeed.setTextSize(Dimension.SP,32);
-                sbtnFast1Speed.setTextSize(Dimension.SP,32);
-                sbtnFast2Speed.setTextSize(Dimension.SP,32);
-                sbtnFast3Speed.setTextSize(Dimension.SP,32);
-                sbtnFast4Speed.setTextSize(Dimension.SP,32);
+                sbtnFastSpeed.setTextSize(Dimension.SP,32);
                 sbtnHelpOption.setTextSize(Dimension.SP,32);
                 if(textToSpeech.isSpeaking()) textToSpeech.stop();
                 textToSpeech.speak("보통 글씨 크기로 설정합니다",TextToSpeech.QUEUE_FLUSH,null,"setSpeechSpeed");
@@ -100,11 +89,7 @@ public class SettingActivity extends AppCompatActivity implements TextToSpeech.O
                 tvSpeechSpeed.setTextSize(Dimension.SP,40);
                 tvHelpOption.setTextSize(Dimension.SP,40);
                 stbnSlowSpeed.setTextSize(Dimension.SP,40);
-                sbtnNormalSpeed.setTextSize(Dimension.SP,40);
-                sbtnFast1Speed.setTextSize(Dimension.SP,40);
-                sbtnFast2Speed.setTextSize(Dimension.SP,40);
-                sbtnFast3Speed.setTextSize(Dimension.SP,40);
-                sbtnFast4Speed.setTextSize(Dimension.SP,40);
+                sbtnFastSpeed.setTextSize(Dimension.SP,40);
                 sbtnHelpOption.setTextSize(Dimension.SP,40);
                 if(textToSpeech.isSpeaking()) textToSpeech.stop();
                 textToSpeech.speak("큰 글씨 크기로 설정합니다",TextToSpeech.QUEUE_FLUSH,null,"setSpeechSpeed");
@@ -114,66 +99,56 @@ public class SettingActivity extends AppCompatActivity implements TextToSpeech.O
         stbnSlowSpeed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                editor.putFloat("speechSpeed",0.8f);
-                editor.commit();
-                if(textToSpeech.isSpeaking()) textToSpeech.stop();
-                textToSpeech.setSpeechRate(0.8f);
-                textToSpeech.speak("말하는 속도가 0.8배 느려집니다",TextToSpeech.QUEUE_FLUSH,null,"setSpeechSpeed");
+                option_speechSpeed = sharedPreferences.getFloat("speechSpeed",SettingOption.speechSpeed);
+                float newSpeechSpeed = Math.round((option_speechSpeed-0.2f)*10)/10f;
+                Log.d("MyTag","speed: "+newSpeechSpeed);
+                if(newSpeechSpeed <= 0.8f) {
+                    editor.putFloat("speechSpeed",0.8f);
+                    editor.commit();
+                    if(textToSpeech.isSpeaking()) textToSpeech.stop();
+                    textToSpeech.setSpeechRate(0.8f);
+                    textToSpeech.speak("말하는 속도가 0.8배 느려집니다 최저 속도입니다", TextToSpeech.QUEUE_FLUSH, null, "setSpeechSpeed");
+                }
+                else {
+                    editor.putFloat("speechSpeed",newSpeechSpeed);
+                    editor.commit();
+                    if(textToSpeech.isSpeaking()) textToSpeech.stop();
+                    textToSpeech.setSpeechRate(newSpeechSpeed);
+                    if(newSpeechSpeed == 1.0f) {
+                        textToSpeech.speak("기본 말하는 속도입니다", TextToSpeech.QUEUE_FLUSH, null, "setSpeechSpeed");
+                    }
+                    else {
+                        textToSpeech.speak("말하는 속도가 느려집니다", TextToSpeech.QUEUE_FLUSH, null, "setSpeechSpeed");
+                    }
+                }
             }
         });
-        sbtnNormalSpeed = findViewById(R.id.setbtn_normal);
-        sbtnNormalSpeed.setOnClickListener(new View.OnClickListener() {
+       sbtnFastSpeed = findViewById(R.id.setbtn_fast);
+        sbtnFastSpeed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                editor.putFloat("speechSpeed",1.0f);
-                editor.commit();
-                if(textToSpeech.isSpeaking()) textToSpeech.stop();
-                textToSpeech.setSpeechRate(1.0f);
-                textToSpeech.speak("기본 말하기 속도입니다",TextToSpeech.QUEUE_FLUSH,null,"setSpeechSpeed");
-            }
-        });
-       sbtnFast1Speed = findViewById(R.id.setbtn_fast1);
-        sbtnFast1Speed.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                editor.putFloat("speechSpeed",1.2f);
-                editor.commit();
-                if(textToSpeech.isSpeaking()) textToSpeech.stop();
-                textToSpeech.setSpeechRate(1.2f);
-                textToSpeech.speak("말하는 속도가 1.2배 빨라집니다",TextToSpeech.QUEUE_FLUSH,null,"setSpeechSpeed");
-            }
-        });
-        sbtnFast2Speed = findViewById(R.id.setbtn_fast2);
-        sbtnFast2Speed.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                editor.putFloat("speechSpeed",1.5f);
-                editor.commit();
-                if(textToSpeech.isSpeaking()) textToSpeech.stop();
-                textToSpeech.setSpeechRate(1.5f);
-                textToSpeech.speak("말하는 속도가 1.5배 빨라집니다",TextToSpeech.QUEUE_FLUSH,null,"setSpeechSpeed");
-            }
-        });
-        sbtnFast3Speed = findViewById(R.id.setbtn_fast3);
-        sbtnFast3Speed.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                editor.putFloat("speechSpeed",1.8f);
-                editor.commit();
-                if(textToSpeech.isSpeaking()) textToSpeech.stop();
-                textToSpeech.setSpeechRate(1.8f);
-                textToSpeech.speak("말하는 속도가 1.8배 빨라집니다",TextToSpeech.QUEUE_FLUSH,null,"setSpeechSpeed");
-            }
-        });
-        sbtnFast4Speed = findViewById(R.id.setbtn_fast4);
-        sbtnFast4Speed.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                editor.putFloat("speechSpeed",2.0f);
-                editor.commit();
-                if(textToSpeech.isSpeaking()) textToSpeech.stop();
-                textToSpeech.setSpeechRate(2.0f);
-                textToSpeech.speak("말하는 속도가 2배 빨라집니다",TextToSpeech.QUEUE_FLUSH,null,"setSpeechSpeed");
+                option_speechSpeed = sharedPreferences.getFloat("speechSpeed",SettingOption.speechSpeed);
+                float newSpeechSpeed = Math.round((option_speechSpeed+0.2f)*10)/10f;
+                Log.d("MyTag","speed: "+newSpeechSpeed);
+                if(newSpeechSpeed >= 2.0f) {
+                    editor.putFloat("speechSpeed",2.0f);
+                    editor.commit();
+                    if(textToSpeech.isSpeaking()) textToSpeech.stop();
+                    textToSpeech.setSpeechRate(2.0f);
+                    textToSpeech.speak("말하는 속도가 2배 빨라집니다 최대 속도입니다", TextToSpeech.QUEUE_FLUSH, null, "setSpeechSpeed");
+                }
+                else {
+                    editor.putFloat("speechSpeed",newSpeechSpeed);
+                    editor.commit();
+                    if(textToSpeech.isSpeaking()) textToSpeech.stop();
+                    textToSpeech.setSpeechRate(newSpeechSpeed);
+                    if(newSpeechSpeed == 1.0f) {
+                        textToSpeech.speak("기본 말하는 속도입니다", TextToSpeech.QUEUE_FLUSH, null, "setSpeechSpeed");
+                    }
+                    else {
+                        textToSpeech.speak("말하는 속도가 빨라집니다", TextToSpeech.QUEUE_FLUSH, null, "setSpeechSpeed");
+                    }
+                }
             }
         });
         sbtnHelpOption = findViewById(R.id.setbtn_help_option);
@@ -207,11 +182,7 @@ public class SettingActivity extends AppCompatActivity implements TextToSpeech.O
         tvSpeechSpeed.setTextSize(Dimension.SP,option_textSize);
         tvHelpOption.setTextSize(Dimension.SP,option_textSize);
         stbnSlowSpeed.setTextSize(Dimension.SP,option_textSize);
-        sbtnNormalSpeed.setTextSize(Dimension.SP,option_textSize);
-        sbtnFast1Speed.setTextSize(Dimension.SP,option_textSize);
-        sbtnFast2Speed.setTextSize(Dimension.SP,option_textSize);
-        sbtnFast3Speed.setTextSize(Dimension.SP,option_textSize);
-        sbtnFast4Speed.setTextSize(Dimension.SP,option_textSize);
+        sbtnFastSpeed.setTextSize(Dimension.SP,option_textSize);
         sbtnHelpOption.setTextSize(Dimension.SP,option_textSize);
     }
 
