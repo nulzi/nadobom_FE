@@ -23,15 +23,18 @@ public class Priority {
         return Double.valueOf(x_max + x_min) / 2;
     }
 
-    static ArrayList<Labels> input(ArrayList<Result> result) {
+    static ArrayList<Labels> input(ArrayList<Result> result, int viewHeight) {
+        double limitMaxHeight = viewHeight / 5;
         ArrayList<Labels> list = new ArrayList<Labels>();
+
         for (int i = 0; i < result.size(); i++) {
             Labels r = new Labels();
             r.name = PrePostProcessor.mClasses[result.get(i).classIndex];
             r.x = mid(result.get(i).rect.left, result.get(i).rect.right);
             r.y =Double.valueOf(result.get(i).rect.bottom);
-            list.add(r);
+            if(r.y > limitMaxHeight) list.add(r);
         }
+
         return list;
     }
     private static String directions(double mid_x, double mid_y, int viewWidth, int viewHeight) {
@@ -60,12 +63,17 @@ public class Priority {
     // 이 부분에서 각각의 요소 값들의 이름을 지정
     static ArrayList<String> priority(ArrayList<Labels> list, int viewWidth, int viewHeight) {
 //        Log.d("MyTag_priority","size: "+viewWidth+", "+viewHeight);
+        double limitMaxHeight = viewHeight / 5;
+        ArrayList<String> results = new ArrayList<String>();
+
+        if(list.size() < 1) return results;
         if(list.size() == 1){
-            ArrayList<String> results = new ArrayList<>();
             results.add(directions(list.get(0).x,list.get(0).y, viewWidth,viewHeight));
             results.add(list.get(0).name);
+            if(list.get(0).y < limitMaxHeight) results.clear();
             return results;
         }
+
         int firstIndex = 0;
         int secondIndex = 1;
         int count = list.size();
@@ -83,9 +91,11 @@ public class Priority {
                 secondIndex = i;
             }
         }
+
         int minLength = 200; // issue 수정 필요
         int firstWeight = getObstacleWeight(list.get(firstIndex).name);
         int secondWeight = getObstacleWeight(list.get(secondIndex).name);
+
         if(len(list.get(secondIndex).x, list.get(secondIndex).y, viewWidth, viewHeight) - len(list.get(firstIndex).x, list.get(firstIndex).y, viewWidth, viewHeight) < minLength && firstWeight > secondWeight){
             int temp = firstIndex;
             firstIndex = secondIndex;
@@ -93,7 +103,6 @@ public class Priority {
         }
 
         // 마지막에 첫 번째 물체의 방향 및 이름, 두 번째 물체의 방향 및 이름, 마지막으로 2개를 제외한 나머지 개수
-        ArrayList<String> results = new ArrayList<>();
         results.add(directions(list.get(firstIndex).x,list.get(firstIndex).y, viewWidth,viewHeight));
         results.add(list.get(firstIndex).name);
         results.add(directions(list.get(secondIndex).x,list.get(secondIndex).y, viewWidth,viewHeight));

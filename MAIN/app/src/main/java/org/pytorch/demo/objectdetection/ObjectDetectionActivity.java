@@ -242,16 +242,22 @@ public class ObjectDetectionActivity extends AbstractCameraXActivity<ObjectDetec
     }
 
     private String makeResultText(ArrayList<String> results) {
+        if (results.size() < 2) return "장애물 탐색 중";
+
         if (results.size() == 2) return results.get(0) + " " + results.get(1);
+
         String location1 = results.get(0);
         String result1 = results.get(1);
         String location2 = results.get(2);
         String result2 = results.get(3);
 //        String count = results.get(4);
-        Log.d("MyTag", location1 + " " + result1 + ", " + location2 + " " + result2);
+
+//        Log.d("MyTag", location1 + " " + result1 + ", " + location2 + " " + result2);
         if (location1.equals(location2) && result1.equals(result2))
             return location1 + " " + result1 + " 2개";
+
         if (location1.equals(location2)) return location1 + " " + result1 + ", 그리고 " + result2;
+
         return location1 + " " + result1 + ", " + location2 + " " + result2;
     }
 
@@ -261,7 +267,7 @@ public class ObjectDetectionActivity extends AbstractCameraXActivity<ObjectDetec
             mResultView.setResults(result.mResults);
             mResultView.invalidate();
             if (!result.mResults.isEmpty())
-                tvObstacle.setText(makeResultText(Priority.priority(Priority.input(result.mResults), viewWidth, viewHeight)));
+                tvObstacle.setText(makeResultText(Priority.priority(Priority.input(result.mResults, viewHeight), viewWidth, viewHeight)));
             else tvObstacle.setText("장애물 탐색 중");
         }
     }
