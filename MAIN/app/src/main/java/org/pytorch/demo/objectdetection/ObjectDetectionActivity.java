@@ -221,6 +221,25 @@ public class ObjectDetectionActivity extends AbstractCameraXActivity<ObjectDetec
     protected void sendData(AnalysisResult result) {
         if (result.mResults.size() == 0) return;
         File file = getFileFromCacheDir();
+    private String getAddress(double latitude, double longitude) {
+        String nowAddr = "확인 불가";
+        Geocoder geocoder = new Geocoder(ObjectDetectionActivity.this, Locale.KOREAN);
+        List<Address> address;
+
+        try {
+            if(geocoder!=null){
+                Log.d("MyTag","위치 위도: "+ latitude + "경도: " + longitude);
+                address = geocoder.getFromLocation(latitude, longitude,1);
+                if(address != null && address.size() >0) {
+                    nowAddr = address.get(0).getAddressLine(0).toString();
+                    nowAddr.replace(" ","");
+                }
+            }
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+        return nowAddr;
+    }
     @Override
     protected long sendObstacleData(Bitmap image, long time, AnalysisResult result) {
         if (result.mResults.size() <= 0 || image == null) return time;
