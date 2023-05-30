@@ -11,7 +11,7 @@ import retrofit2.http.Part;
 public interface APIConfig {
     @Multipart
     @POST("main/")
-    Call<ResponseBody> postSubject(
+    Call<ResponseBody> reqTextImage(
             @Part("label") RequestBody text,
             @Part MultipartBody.Part image
     );

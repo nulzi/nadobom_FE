@@ -21,7 +21,7 @@ public class API {
     private static Retrofit retrofit;
     private static APIConfig apiConfig;
 
-    public static void obstacleDataTransfer(File image, ArrayList<String> resultList) {
+    public static void postObstacleData(File image, ArrayList<String> resultList) {
         retrofit = new Retrofit.Builder()
                 .baseUrl(APIConfig.BASE_URL)
                 .addConverterFactory(ScalarsConverterFactory.create())
@@ -36,20 +36,55 @@ public class API {
                 info = info + result;
                 info = info + "\n";
             }
-            Log.d("MyTag", "info "+info);
+//            Log.d("MyTag", "info "+info);
 
             RequestBody reqFile = RequestBody.create(image, MediaType.parse("multipart/form-data"));
             MultipartBody.Part reqImage = MultipartBody.Part.createFormData("image", image.getName(), reqFile);
             RequestBody reqInfo = RequestBody.create((info), MediaType.parse("text/plain"));
 
-            Log.d("MyTag","post start");
-            post = apiConfig.postSubject(reqInfo, reqImage);
+//            Log.d("MyTag","post start");
+            post = apiConfig.reqTextImage(reqInfo, reqImage);
             post.enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                     try {
                         String str = response.body().string();
-                        Log.d("MyTag","response : "+ str);
+//                        Log.d("MyTag","response : "+ str);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    Log.e("D_Test", "실패: " + t.toString());
+                }
+            });
+        }
+    }
+
+    public static void postReportData(File image, String location) {
+        retrofit = new Retrofit.Builder()
+                .baseUrl(APIConfig.BASE_URL)
+                .addConverterFactory(ScalarsConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        apiConfig = retrofit.create(APIConfig.class);
+
+        if (image.exists()) {
+            RequestBody reqFile = RequestBody.create(image, MediaType.parse("multipart/form-data"));
+            MultipartBody.Part reqImage = MultipartBody.Part.createFormData("image", image.getName(), reqFile);
+            RequestBody reqLocation = RequestBody.create((location), MediaType.parse("text/plain"));
+
+//            Log.d("MyTag","post start");
+            post = apiConfig.reqTextImage(reqLocation, reqImage);
+            post.enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    try {
+                        String str = response.body().string();
+//                        Log.d("MyTag","response : "+ str);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
