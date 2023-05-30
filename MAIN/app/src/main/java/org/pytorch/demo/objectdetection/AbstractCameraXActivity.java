@@ -44,7 +44,7 @@ public abstract class AbstractCameraXActivity<R> extends BaseModuleActivity {
     // 상속 받은 자식이 원하는 preview 설정
     protected abstract TextureView getCameraPreviewTextureView();
 
-    protected abstract long saveImageToJpeg(Bitmap image, long time, R result);
+    protected abstract long sendObstacleData(Bitmap image, long time, R result);
 
     protected abstract void sendData(R result);
 
@@ -111,7 +111,7 @@ public abstract class AbstractCameraXActivity<R> extends BaseModuleActivity {
                 if (result != null) {
                     // 카메라 캡쳐 5분마다
                     if (SystemClock.elapsedRealtime() - captureTime > option_captureTime) {
-                        captureTime = saveImageToJpeg(textureView.getBitmap(), SystemClock.elapsedRealtime(), result);
+                        captureTime = sendObstacleData(textureView.getBitmap(), SystemClock.elapsedRealtime(), result);
                     }
                     mLastAnalysisResultTime = SystemClock.elapsedRealtime();
                     runOnUiThread(() -> applyToUiAnalyzeImageResult(result));
