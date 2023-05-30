@@ -70,8 +70,8 @@ public class ObjectDetectionActivity extends AbstractCameraXActivity<ObjectDetec
     final LocationListener locationListener = new LocationListener() {
         @Override
         public void onLocationChanged(@NonNull Location location) {
-            longitude = location.getLongitude();
-            latitude = location.getLatitude();
+            longitude = Math.round(location.getLongitude()*1000)/1000.0;
+            latitude = Math.round(location.getLatitude()*1000)/1000.0;
 //            Log.d("MyTag", "listener: 위도: " + latitude+ ", 경도: " + longitude);
         }
     };
