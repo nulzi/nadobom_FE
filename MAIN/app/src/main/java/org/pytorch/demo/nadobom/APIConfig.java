@@ -25,8 +25,8 @@ public interface APIConfig {
     @Multipart
     @POST("report/")
     Call<ResponseBody> reqReport(
-            @Part("label") RequestBody text,
+            @Part("location") RequestBody text,
             @Part MultipartBody.Part image
     );
-    static final String BASE_URL = "http://43.201.8.49:8000/"; // 주소 입력 부분
+    static final String BASE_URL = "http://3.35.9.244:8000/"; // 주소 입력 부분
 }

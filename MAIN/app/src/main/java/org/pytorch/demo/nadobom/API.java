@@ -89,7 +89,7 @@ public class API {
 
                 @Override
                 public void onFailure(Call<ResponseBody> call, Throwable t) {
-                    Log.e("D_Test", "실패: " + t.toString());
+                    Log.e("D_Test1", "실패: " + t.toString());
                 }
             });
         }
@@ -124,7 +124,7 @@ public class API {
 
                 @Override
                 public void onFailure(Call<ResponseBody> call, Throwable t) {
-                    Log.e("D_Test", "실패: " + t.toString());
+                    Log.e("D_Test2", "실패: " + t.toString());
                 }
             });
         }

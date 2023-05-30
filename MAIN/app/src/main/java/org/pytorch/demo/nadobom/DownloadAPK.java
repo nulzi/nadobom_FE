@@ -75,6 +75,7 @@ public class DownloadAPK extends AppCompatActivity {
                 lenghtOfFile = connection.getContentLength(); // 파일 크기를 가져옴
 
                 File path = getFilesDir();
+                Log.d("MyTag","getFilesDir() "+path);
                 outputFile = new File(path, "nadobom.apk");
                 if (outputFile.exists()) { // 기존 파일 존재시 삭제하고 다운로드
                     outputFile.delete();

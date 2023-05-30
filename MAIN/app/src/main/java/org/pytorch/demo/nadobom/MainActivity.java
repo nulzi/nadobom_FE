@@ -70,10 +70,10 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
             editor.commit();
         }
         textToSpeech = new TextToSpeech(this, this);
-        //앱 버전 확인
+        //앱 버전 확인 false일 때 업데이트
         API.getUpdateCheck(BuildConfig.VERSION_CODE);
         // 앱 버전 확인 후 업데이트
-        if(isNetworkConnected(this) && false){// 앱 버전 확인 조건 추가
+        if(isNetworkConnected(this) && true){// 앱 버전 확인 조건 추가
 //            Log.d("MyTag","network connected");
             showUpdateDialog(this);
         }
