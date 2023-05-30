@@ -272,8 +272,8 @@ public class ObjectDetectionActivity extends AbstractCameraXActivity<ObjectDetec
 
         saveImageToJpeg(image, SystemClock.elapsedRealtime(), "_report");
         File file = getFileFromCacheDir("_report");
-        String location = latitude + " " + longitude + " " + "실제 장소";
-        Log.d("MyTag",getAddress(latitude,longitude));
+        String location = latitude + "," + longitude + "," + getAddress(latitude,longitude);
+        Log.d("MyTag",location);
 
 //        Log.d("MyTag",location);
         if(file != null) API.postReportData(file, location);
@@ -284,7 +284,7 @@ public class ObjectDetectionActivity extends AbstractCameraXActivity<ObjectDetec
     }
 
     private String getAddress(double latitude, double longitude) {
-        String nowAddr = "확인 불가";
+        String nowAddr = "실제 주소";
         Geocoder geocoder = new Geocoder(ObjectDetectionActivity.this, Locale.KOREAN);
         List<Address> address;
 
@@ -294,7 +294,7 @@ public class ObjectDetectionActivity extends AbstractCameraXActivity<ObjectDetec
                 address = geocoder.getFromLocation(latitude, longitude,1);
                 if(address != null && address.size() >0) {
                     nowAddr = address.get(0).getAddressLine(0).toString();
-                    nowAddr.replace(" ","");
+//                    nowAddr.replace(" ","");
                 }
             }
         }catch (IOException e){
