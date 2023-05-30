@@ -220,8 +220,15 @@ public class ObjectDetectionActivity extends AbstractCameraXActivity<ObjectDetec
     protected void sendData(AnalysisResult result) {
         if (result.mResults.size() == 0) return;
         File file = getFileFromCacheDir();
+    @Override
+    protected long sendObstacleData(Bitmap image, long time, AnalysisResult result) {
+        if (result.mResults.size() <= 0 || image == null) return time;
+        saveImageToJpeg(image, time, "_od");
+        File file = getFileFromCacheDir("_od");
         ArrayList<String> resultList = normalization(result.mResults, viewWidth, viewHeight);
-        if (file != null) API.obstacleDataTransfer(file, resultList);
+        if (file != null) API.postObstacleData(file, resultList);
+
+        return SystemClock.elapsedRealtime();
     }
 
     private void deleteImg(String path){
@@ -294,12 +301,10 @@ public class ObjectDetectionActivity extends AbstractCameraXActivity<ObjectDetec
         byte[] imageBytes = out.toByteArray();
         return BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
     }
-    @Override
-    protected long saveImageToJpeg(Bitmap image, long time, AnalysisResult result) {
-        if (result.mResults.size() <= 0 || image == null) return time;
+    protected void saveImageToJpeg(Bitmap image, long time, String dataType) {
         File storage = getCacheDir();
         String timeString = Long.toString(time);
-        String fileName = timeString + "_od.jpg";
+        String fileName = timeString + dataType + ".jpg";
 
         File tempFile = new File(storage, fileName);
 
@@ -316,8 +321,6 @@ public class ObjectDetectionActivity extends AbstractCameraXActivity<ObjectDetec
         } catch (IOException e) {
             Log.e("MyTag", "IOException : " + e.getMessage());
         }
-        sendData(result);
-        return SystemClock.elapsedRealtime();
     }
     public static String assetFilePath(Context context, String assetName) throws IOException {
         File file = new File(context.getFilesDir(), assetName);
