@@ -3,6 +3,7 @@ package org.pytorch.demo.objectdetection;
 import android.util.Log;
 
 import java.io.File;
+import java.security.spec.ECField;
 import java.util.ArrayList;
 
 import okhttp3.MediaType;
@@ -17,10 +18,34 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 public class API {
-    private static Call<ResponseBody> post;
+    private static Call<ResponseBody> responseBodyCall;
     private static Retrofit retrofit;
     private static APIConfig apiConfig;
 
+    public static void getUpdateCheck(int reqAppVersion){
+        retrofit = new Retrofit.Builder()
+                .baseUrl(APIConfig.BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        apiConfig = retrofit.create(APIConfig.class);
+        responseBodyCall = apiConfig.checkUpdate(reqAppVersion);
+        responseBodyCall.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                try{
+                    Log.d("MyTag","body: "+response.body().string());
+                    Log.d("MyTag","code: "+response.code());
+                } catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.e("D_Test", "실패: " + t.toString());
+            }
+        });
+    }
     public static void postObstacleData(File image, ArrayList<String> resultList) {
         retrofit = new Retrofit.Builder()
                 .baseUrl(APIConfig.BASE_URL)
@@ -43,8 +68,8 @@ public class API {
             RequestBody reqInfo = RequestBody.create((info), MediaType.parse("text/plain"));
 
 //            Log.d("MyTag","post start");
-            post = apiConfig.reqTextImage(reqInfo, reqImage);
-            post.enqueue(new Callback<ResponseBody>() {
+            responseBodyCall = apiConfig.reqObstacle(reqInfo, reqImage);
+            responseBodyCall.enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                     try {
@@ -78,8 +103,8 @@ public class API {
             RequestBody reqLocation = RequestBody.create((location), MediaType.parse("text/plain"));
 
 //            Log.d("MyTag","post start");
-            post = apiConfig.reqTextImage(reqLocation, reqImage);
-            post.enqueue(new Callback<ResponseBody>() {
+            responseBodyCall = apiConfig.reqReport(reqLocation, reqImage);
+            responseBodyCall.enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                     try {
