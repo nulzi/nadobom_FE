@@ -39,8 +39,8 @@ public class Priority {
     }
     private static String directions(double mid_x, double mid_y, int viewWidth, int viewHeight) {
         String direction = "";
-        Double left_y = -viewHeight/(viewWidth*1.5/4 - viewWidth*1/5)*(mid_x-viewWidth*1/5);
-        Double right_y = viewHeight/(viewWidth*2.5/4 - (viewWidth*4/5))*(mid_x-(viewWidth*4/5));
+        Double left_y = -viewHeight/(viewWidth*1.5/4 - viewWidth*1/5)*(mid_x-viewWidth*1.5/4);
+        Double right_y = viewHeight/(viewWidth*2.5/4 - (viewWidth*4/5))*(mid_x-(viewWidth*2.5/4));
 
         if(left_y >= 0 && left_y <= viewHeight){
             if(mid_y < left_y){direction = "좌측";}
