@@ -12,9 +12,13 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkCapabilities;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
@@ -56,6 +60,10 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
 
         setContentView(R.layout.activity_main);
         sharedPreferences = getSharedPreferences("settingOption",MODE_PRIVATE);
+        // 앱 버전 확인 후 업데이트
+        if(isNetworkConnected(this)){// 앱 버전 확인 조건 추가
+            Log.d("MyTag","network connected");
+        }
         // 설정 옵션 초기화
         if(sharedPreferences.getAll().size() == 0){
             SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -152,5 +160,18 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
         }
         else Log.e("MyTag","textToSpeech is null");
         super.onResume();
+    }
+
+    public boolean isNetworkConnected(Context context){
+        boolean enable = false;
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        Network network = connectivityManager.getActiveNetwork();
+        NetworkCapabilities networkCapabilities = connectivityManager.getNetworkCapabilities(network);
+
+        if(networkCapabilities == null) return false;
+
+        if(networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) || networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) enable = true;
+
+        return enable;
     }
 }
