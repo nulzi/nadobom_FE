@@ -7,12 +7,14 @@
 package org.pytorch.demo.objectdetection;
 
 import androidx.annotation.Dimension;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -22,8 +24,10 @@ import android.net.NetworkCapabilities;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -35,6 +39,7 @@ import java.util.Locale;
 public class MainActivity extends AppCompatActivity implements TextToSpeech.OnInitListener {
 
     public static TextToSpeech textToSpeech;
+    private AlertDialog updateDialog;
     private SharedPreferences sharedPreferences;
     private Button btnHelp;
     private Button btnLive;
@@ -60,10 +65,6 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
 
         setContentView(R.layout.activity_main);
         sharedPreferences = getSharedPreferences("settingOption",MODE_PRIVATE);
-        // 앱 버전 확인 후 업데이트
-        if(isNetworkConnected(this)){// 앱 버전 확인 조건 추가
-            Log.d("MyTag","network connected");
-        }
         // 설정 옵션 초기화
         if(sharedPreferences.getAll().size() == 0){
             SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -75,6 +76,11 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
             editor.commit();
         }
         textToSpeech = new TextToSpeech(this, this);
+        // 앱 버전 확인 후 업데이트
+        if(isNetworkConnected(this) && false){// 앱 버전 확인 조건 추가
+//            Log.d("MyTag","network connected");
+            showUpdateDialog(this);
+        }
         btnHelp = findViewById(R.id.btn_help_start);
         option_help = sharedPreferences.getBoolean("helpOption",SettingOption.helpOption);
         if (!option_help) btnHelp.setVisibility(View.INVISIBLE);
@@ -136,8 +142,14 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
             textToSpeech.setLanguage(Locale.KOREAN);
             textToSpeech.setPitch(1.0f);
             textToSpeech.setSpeechRate(option_speechSpeed);
-            textToSpeech.speak("나도봄 시작 화면입니다.", TextToSpeech.QUEUE_FLUSH, null, "startComment");
-            if (option_help) textToSpeech.speak("다음은 시작 화면 도움말입니다 장애물 탐지 시작버튼, 설정을 위한 설정버튼이 있습니다", TextToSpeech.QUEUE_ADD, null, "helpComment");
+            if(updateDialog != null && updateDialog.isShowing()) {
+                Log.d("MyTag","dialog show");
+                if(textToSpeech.isSpeaking()) textToSpeech.stop();
+                textToSpeech.speak("새로운 버전의 앱이 있습니다 업데이트 하시겠습니까?", TextToSpeech.QUEUE_FLUSH, null, "updateComment");
+            }else {
+                textToSpeech.speak("나도봄 시작 화면입니다.", TextToSpeech.QUEUE_FLUSH, null, "startComment");
+                if (option_help) textToSpeech.speak("다음은 시작 화면 도움말입니다 장애물 탐지 시작버튼, 설정을 위한 설정버튼이 있습니다", TextToSpeech.QUEUE_ADD, null, "helpComment");
+            }
         } else Log.e("MyTag", "TTS initialization fail");
     }
 
@@ -173,5 +185,24 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
         if(networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) || networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) enable = true;
 
         return enable;
+    }
+
+    private void showUpdateDialog(Context context) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("앱 업데이트").setMessage("새로운 버전의 앱이 있습니다.\n업데이트 하시겠습니까?");
+        builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Log.d("MyTag","update start");
+            }
+        });
+        builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Log.d("MyTag","update cancel");
+            }
+        });
+        if (updateDialog == null) updateDialog = builder.create();
+        updateDialog.show();
     }
 }
