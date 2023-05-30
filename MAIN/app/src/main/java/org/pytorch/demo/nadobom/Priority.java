@@ -55,10 +55,12 @@ public class Priority {
     }
 
     private static int getObstacleWeight(String obstacle){
-        if(obstacle.equals("트럭")) return 0;
-        if(obstacle.equals("킥보드") || obstacle.equals("자전거")) return 1;
-        if(obstacle.equals("볼라드") || obstacle.equals("바리케이드")) return 2;
-        return 3;
+        if(obstacle.equals("트럭") || obstacle.equals("차")) return 0;
+        if(obstacle.equals("오토바이")) return 1;
+        if(obstacle.equals("킥보드") || obstacle.equals("자전거")) return 2;
+        if(obstacle.equals("볼라드") || obstacle.equals("바리케이드")) return 3;
+        if(obstacle.equals("나무") || obstacle.equals("신호점검기") || obstacle.equals("화단")) return 4;
+        return 5;
     }
     // 이 부분에서 각각의 요소 값들의 이름을 지정
     static ArrayList<String> priority(ArrayList<Labels> list, int viewWidth, int viewHeight) {
