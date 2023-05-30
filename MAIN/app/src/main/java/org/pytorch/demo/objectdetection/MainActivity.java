@@ -143,7 +143,7 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
             btnSetting.setTextSize(Dimension.SP,option_textSize);
 
             textToSpeech.setSpeechRate(option_speechSpeed);
-            textToSpeech.speak("반갑습니다. 나도봄 시작 화면입니다.", TextToSpeech.QUEUE_FLUSH, null, "startComment");
+            textToSpeech.speak("나도봄 시작 화면입니다.", TextToSpeech.QUEUE_FLUSH, null, "startComment");
         }
         else Log.e("MyTag","textToSpeech is null");
         super.onResume();
