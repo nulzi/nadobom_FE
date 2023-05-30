@@ -1,4 +1,4 @@
-package org.pytorch.demo.objectdetection;
+package org.pytorch.demo.nadobom;
 
 public class SettingOption {
     static float speechSpeed = 1.0f;

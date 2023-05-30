@@ -1,4 +1,4 @@
-package org.pytorch.demo.objectdetection;
+package org.pytorch.demo.nadobom;
 
 import com.google.gson.annotations.SerializedName;
 

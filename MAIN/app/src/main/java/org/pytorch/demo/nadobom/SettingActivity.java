@@ -1,4 +1,4 @@
-package org.pytorch.demo.objectdetection;
+package org.pytorch.demo.nadobom;
 
 import androidx.annotation.Dimension;
 import androidx.appcompat.app.AppCompatActivity;
