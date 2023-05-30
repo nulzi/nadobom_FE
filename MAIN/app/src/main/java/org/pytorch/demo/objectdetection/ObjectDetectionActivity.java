@@ -136,7 +136,8 @@ public class ObjectDetectionActivity extends AbstractCameraXActivity<ObjectDetec
     @Override
     protected void onDestroy() {
         textToSpeech.stop();
-        resetCacheDir();
+        resetCacheDir("_od");
+        resetCacheDir("_report");
         super.onDestroy();
     }
 
@@ -156,21 +157,21 @@ public class ObjectDetectionActivity extends AbstractCameraXActivity<ObjectDetec
                 .findViewById(R.id.object_detection_texture_view);
     }
 
-    private void resetCacheDir() {
+    private void resetCacheDir(String dataType) {
         File file = new File(getCacheDir().toString());
 
         File[] files = file.listFiles();
 
         String path = getCacheDir() + "/";
         for (File tempFile : files) {
-            if (tempFile.getName().contains("_od")) {
+            if (tempFile.getName().contains(dataType)) {
                 deleteImg(path + tempFile.getName());
             }
         }
     }
 
     @Nullable
-    private File getFileFromCacheDir(){
+    private File getFileFromCacheDir(String dataType){
         ArrayList<String> ods = new ArrayList<>();
 
         File file = new File(getCacheDir().toString());
@@ -178,7 +179,7 @@ public class ObjectDetectionActivity extends AbstractCameraXActivity<ObjectDetec
         File[] files = file.listFiles();
 
         for(File tempFile : files){
-            if(tempFile.getName().contains("_od")){
+            if(tempFile.getName().contains(dataType)){
                 ods.add(tempFile.getName());
             }
         }
