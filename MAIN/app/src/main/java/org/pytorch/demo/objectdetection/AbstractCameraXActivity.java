@@ -37,6 +37,8 @@ public abstract class AbstractCameraXActivity<R> extends BaseModuleActivity {
     protected int viewWidth = 0;
     protected int viewHeight = 0;
     protected SharedPreferences sharedPreferences;
+    protected boolean isReport = false;
+    protected long reportTime;
 
     // 상속 받은 자식이 원하는 view로 출력하도록 설정
     protected abstract int getContentViewLayoutId();
@@ -46,7 +48,7 @@ public abstract class AbstractCameraXActivity<R> extends BaseModuleActivity {
 
     protected abstract long sendObstacleData(Bitmap image, long time, R result);
 
-    protected abstract void sendData(R result);
+    protected abstract void sendReportData(Bitmap image);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,6 +106,11 @@ public abstract class AbstractCameraXActivity<R> extends BaseModuleActivity {
             try {
                 Long option_odTime = sharedPreferences.getLong("odTime",SettingOption.odTime);
                 Long option_captureTime = sharedPreferences.getLong("captureTime",SettingOption.captureTime);
+                if (isReport && SystemClock.elapsedRealtime() - reportTime > 3500) {
+                    // 신고 기능이 눌리고 2초뒤에 동작
+                    sendReportData(textureView.getBitmap());
+                    return;
+                }
                 if (SystemClock.elapsedRealtime() - mLastAnalysisResultTime < option_odTime) {
                     return;
                 }

@@ -1,12 +1,19 @@
 package org.pytorch.demo.objectdetection;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
 import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.graphics.YuvImage;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.media.Image;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -21,9 +28,11 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.Dimension;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 import androidx.camera.core.ImageProxy;
+import androidx.core.app.ActivityCompat;
 
 import org.pytorch.IValue;
 import org.pytorch.LiteModuleLoader;
@@ -40,11 +49,13 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 // 이와 같이 <타입>이 가능한 이유는 해당 클래스가 static 클래스이기 때문이다.
 public class ObjectDetectionActivity extends AbstractCameraXActivity<ObjectDetectionActivity.AnalysisResult> implements TextToSpeech.OnInitListener {
     private Module mModule = null;
+    private static final String[] PERMISSIONS = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
     // 객체 탐지 결과 화면
     private ResultView mResultView;
     private TextToSpeech textToSpeech;
@@ -53,6 +64,17 @@ public class ObjectDetectionActivity extends AbstractCameraXActivity<ObjectDetec
     private Button btnReport;
     private Button btnEnd;
     private boolean option_help;
+    private double longitude;
+    private double latitude;
+
+    final LocationListener locationListener = new LocationListener() {
+        @Override
+        public void onLocationChanged(@NonNull Location location) {
+            longitude = location.getLongitude();
+            latitude = location.getLatitude();
+//            Log.d("MyTag", "listener: 위도: " + latitude+ ", 경도: " + longitude);
+        }
+    };
 
     // 탐지 결과 저장 클래스
     static class AnalysisResult {
@@ -68,8 +90,26 @@ public class ObjectDetectionActivity extends AbstractCameraXActivity<ObjectDetec
         super.onCreate(savedInstanceState);
 
         textToSpeech = new TextToSpeech(this, this);
+        final LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(
+                    ObjectDetectionActivity.this,
+                    PERMISSIONS,
+                    0);
+        } else {
+            Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            if(location != null) {
+                longitude = location.getLongitude();
+                latitude = location.getLatitude();
+//                Log.d("MyTag", "listener: 위도: " + latitude+ ", 경도: " + longitude);
+            }
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1, locationListener);
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 1, locationListener);
+        }
 
-        option_help = sharedPreferences.getBoolean("helpOption",SettingOption.helpOption);
+        option_help = sharedPreferences.getBoolean("helpOption", SettingOption.helpOption);
         btnHelp = findViewById(R.id.btn_help_main);
         if (!option_help) btnHelp.setVisibility(View.INVISIBLE);
         else {
@@ -84,7 +124,7 @@ public class ObjectDetectionActivity extends AbstractCameraXActivity<ObjectDetec
 
         tvObstacle = findViewById(R.id.tv_obstacle);
         tvObstacle.setText("장애물 탐색 중");
-        tvObstacle.setTextSize(Dimension.SP, sharedPreferences.getInt("textSize",SettingOption.textSize));
+        tvObstacle.setTextSize(Dimension.SP, sharedPreferences.getInt("textSize", SettingOption.textSize));
         tvObstacle.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -104,11 +144,16 @@ public class ObjectDetectionActivity extends AbstractCameraXActivity<ObjectDetec
         });
 
         btnReport = findViewById(R.id.btn_report);
-        btnReport.setTextSize(Dimension.SP, sharedPreferences.getInt("textSize",SettingOption.textSize));
+        btnReport.setTextSize(Dimension.SP, sharedPreferences.getInt("textSize", SettingOption.textSize));
         btnReport.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                // 인터넷 확인 조건 만들기
+                reportTime = SystemClock.elapsedRealtime();
+                isReport = true;
+                if(textToSpeech.isSpeaking()) textToSpeech.stop();
+                textToSpeech.speak("신고를 시작합니다 카메라를 바닥으로 향하고 3초간 대기해주세요", TextToSpeech.QUEUE_FLUSH, null, "report");
+//                Log.d("MyTag","위치 위도: "+ latitude + "경도: " + longitude);
             }
         });
 
@@ -218,9 +263,26 @@ public class ObjectDetectionActivity extends AbstractCameraXActivity<ObjectDetec
     }
 
     @Override
-    protected void sendData(AnalysisResult result) {
-        if (result.mResults.size() == 0) return;
-        File file = getFileFromCacheDir();
+    protected void sendReportData(Bitmap image) {
+        Log.d("MyTag","report start");
+        if(image == null) {
+            isReport = false;
+            return;
+        }
+
+        saveImageToJpeg(image, SystemClock.elapsedRealtime(), "_report");
+        File file = getFileFromCacheDir("_report");
+        String location = latitude + " " + longitude + " " + "실제 장소";
+        Log.d("MyTag",getAddress(latitude,longitude));
+
+//        Log.d("MyTag",location);
+        if(file != null) API.postReportData(file, location);
+        // 안내음 처리는 잘 모르겠다
+        textToSpeech.speak("신고가 완료됐습니다",TextToSpeech.QUEUE_ADD,null,"reportEnd");
+
+        isReport = false;
+    }
+
     private String getAddress(double latitude, double longitude) {
         String nowAddr = "확인 불가";
         Geocoder geocoder = new Geocoder(ObjectDetectionActivity.this, Locale.KOREAN);
