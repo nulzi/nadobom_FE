@@ -2,7 +2,10 @@ package org.pytorch.demo.nadobom;
 
 import android.util.Log;
 
+import org.json.JSONObject;
+
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import okhttp3.MediaType;
@@ -16,12 +19,15 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 
+interface UpdateCheckCallback {
+    void onUpdateCheckCompleted(boolean version);
+}
 public class API {
     private static Call<ResponseBody> responseBodyCall;
     private static Retrofit retrofit;
     private static APIConfig apiConfig;
 
-    public static void getUpdateCheck(int reqAppVersion){
+    public static void getUpdateCheck(int reqAppVersion, final UpdateCheckCallback callback){
         retrofit = new Retrofit.Builder()
                 .baseUrl(APIConfig.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -32,16 +38,20 @@ public class API {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 try{
-                    Log.d("MyTag","body: "+response.body().string());
-                    Log.d("MyTag","code: "+response.code());
+                    JSONObject jsonObject = new JSONObject(response.body().string());
+                    boolean version = jsonObject.getBoolean("version");
+                    callback.onUpdateCheckCompleted(version);
+                    Log.d("MyTag","json: "+jsonObject.getBoolean("version"));
                 } catch (Exception e){
                     e.printStackTrace();
+                    callback.onUpdateCheckCompleted(true);
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Log.e("D_Test", "실패: " + t.toString());
+                callback.onUpdateCheckCompleted(true);
             }
         });
     }
