@@ -66,6 +66,8 @@ public class ObjectDetectionActivity extends AbstractCameraXActivity<ObjectDetec
     private boolean option_help;
     private double longitude;
     private double latitude;
+    private final int maxImageWidth = 640;
+    private final int maxImageHeight = 640;
 
     final LocationListener locationListener = new LocationListener() {
         @Override
@@ -304,6 +306,7 @@ public class ObjectDetectionActivity extends AbstractCameraXActivity<ObjectDetec
     }
     @Override
     protected long sendObstacleData(Bitmap image, long time, AnalysisResult result) {
+        Log.d("MyTag","result size: "+result.mResults.size());
         if (result.mResults.size() <= 0 || image == null) return time;
         saveImageToJpeg(image, time, "_od");
         File file = getFileFromCacheDir("_od");
@@ -384,6 +387,21 @@ public class ObjectDetectionActivity extends AbstractCameraXActivity<ObjectDetec
         return BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
     }
     protected void saveImageToJpeg(Bitmap image, long time, String dataType) {
+        // 이미지 크기 조절 전 작업
+        Bitmap resizedImage = null;
+
+        if(image.getWidth() > maxImageWidth || image.getHeight() > maxImageHeight) {
+            float widthRatio = (float) maxImageWidth / image.getWidth();
+            float heightRatio = (float) maxImageHeight / image.getHeight();
+            float scale = Math.min(widthRatio, heightRatio);
+            int newWidth = Math.round(image.getWidth() * scale);
+            int newHeight = Math.round(image.getHeight() * scale);
+//            Log.d("MyTag","scale"+scale);
+//            Log.d("MyTag","new width, height"+newWidth+", "+newHeight);
+            resizedImage = Bitmap.createScaledBitmap(image, newWidth, newHeight, true);
+        }
+
+        // Bitmap to Jpeg
         File storage = getCacheDir();
         String timeString = Long.toString(time);
         String fileName = timeString + dataType + ".jpg";
@@ -394,14 +412,17 @@ public class ObjectDetectionActivity extends AbstractCameraXActivity<ObjectDetec
             tempFile.createNewFile();
 
             FileOutputStream out = new FileOutputStream(tempFile);
-
-            image.compress(Bitmap.CompressFormat.JPEG, 100, out);
+            if(resizedImage != null) resizedImage.compress(Bitmap.CompressFormat.JPEG,100,out);
+            else image.compress(Bitmap.CompressFormat.JPEG, 100, out);
 
             out.close();
         } catch (FileNotFoundException e) {
             Log.e("MyTag", "FileNotFoundException : " + e.getMessage());
         } catch (IOException e) {
             Log.e("MyTag", "IOException : " + e.getMessage());
+        } finally {
+            // 크기 조정한 이미지 메모리에서 제거
+            if(resizedImage != null) resizedImage.recycle();
         }
     }
     public static String assetFilePath(Context context, String assetName) throws IOException {
