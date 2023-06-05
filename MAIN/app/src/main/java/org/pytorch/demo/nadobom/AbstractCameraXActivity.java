@@ -57,32 +57,32 @@ public abstract class AbstractCameraXActivity<R> extends BaseModuleActivity {
         sharedPreferences = getSharedPreferences("settingOption",MODE_PRIVATE);
         startBackgroundThread();
         //권한이 없으면 권한 요청 있으면 setupCameraX()
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
-            != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(
-                this,
-                PERMISSIONS,
-                REQUEST_CODE_CAMERA_PERMISSION);
-        } else {
+//        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+//            != PackageManager.PERMISSION_GRANTED) {
+//            ActivityCompat.requestPermissions(
+//                this,
+//                PERMISSIONS,
+//                REQUEST_CODE_CAMERA_PERMISSION);
+//        } else {
             setupCameraX();
-        }
+//        }
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        if (requestCode == REQUEST_CODE_CAMERA_PERMISSION) {
-            if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
-                Toast.makeText(
-                    this,
-                    "You can't use object detection example without granting CAMERA permission",
-                    Toast.LENGTH_LONG)
-                    .show();
-                finish();
-            } else {
-                setupCameraX();
-            }
-        }
-    }
+//    @Override
+//    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+//        if (requestCode == REQUEST_CODE_CAMERA_PERMISSION) {
+//            if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
+//                Toast.makeText(
+//                    this,
+//                    "You can't use object detection example without granting CAMERA permission",
+//                    Toast.LENGTH_LONG)
+//                    .show();
+//                finish();
+//            } else {
+//                setupCameraX();
+//            }
+//        }
+//    }
 
     private void setupCameraX() {
         final TextureView textureView = getCameraPreviewTextureView();
