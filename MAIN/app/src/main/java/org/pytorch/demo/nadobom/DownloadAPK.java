@@ -38,7 +38,7 @@ public class DownloadAPK extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_download_apk);
         context = this.getBaseContext();
-
+        Log.d("MyTag","download apk create");
 //        linearLayout = (LinearLayout) findViewById(R.id.downloadprogress_layout);
         textView = (TextView) findViewById(R.id.txtView01);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
@@ -47,21 +47,24 @@ public class DownloadAPK extends AppCompatActivity {
     }
 
     private void downloadAPK() {
+        Log.d("MyTag","downloadapk()");
         // 백그라운드 객체를 만들어 주어야 다운로드 취소가 제대로 동작됨
         downloadFileAsyncTask = new DownloadFileFromURL();
-        downloadFileAsyncTask.execute(APIConfig.BASE_URL + "update/execute");
+        downloadFileAsyncTask.execute(APIConfig.BASE_URL + "update/excute");
     }
 
     class DownloadFileFromURL extends AsyncTask<String, Integer, String> {
 
         @Override
         protected void onPreExecute() {
+            Log.d("MyTag","onPreExecute()");
             super.onPreExecute();
             progressBar.setProgress(0);
         }
 
         @Override
         protected String doInBackground(String... apkurl) {
+            Log.d("MyTag","doInBackground()");
             int count;
             int lenghtOfFile = 0;
             InputStream input = null;
@@ -104,6 +107,7 @@ public class DownloadAPK extends AppCompatActivity {
                 e.printStackTrace();
                 Log.e("UpdateAPP", "Update error! " + e.getMessage());
             } finally {
+                Log.d("MyTag","doInBackground() finally");
                 if (input != null) {
                     try {
                         input.close();
@@ -121,6 +125,7 @@ public class DownloadAPK extends AppCompatActivity {
         }
 
         protected void onProgressUpdate(Integer... progress) {
+//            Log.d("MyTag","onProgressUpdate()");
             super.onProgressUpdate(progress);
             // 백그라운드 작업의 진행상태를 표시하기 위해서 호출하는 메소드
             progressBar.setProgress(progress[0]);
@@ -128,6 +133,7 @@ public class DownloadAPK extends AppCompatActivity {
         }
 
         protected void onPostExecute(String result) {
+            Log.d("MyTag","onPostExecute()");
             if (result == null) {
                 progressBar.setProgress(0);
                 Toast.makeText(getApplicationContext(), "다운로드 완료되었습니다.", Toast.LENGTH_LONG).show();
@@ -135,7 +141,7 @@ public class DownloadAPK extends AppCompatActivity {
                 System.out.println("getPackageName : " + getPackageName());
                 System.out.println("APPLICATION_ID Path : " + BuildConfig.APPLICATION_ID);
                 System.out.println("outputFile Path : " + outputFile.getAbsolutePath());
-                System.out.println("Fie getPath : " + outputFile.getPath());
+                System.out.println("File getPath : " + outputFile.getPath());
 
                 // 미디어 스캐닝
                 MediaScannerConnection.scanFile(getApplicationContext(), new String[]{outputFile.getAbsolutePath()}, null, new MediaScannerConnection.OnScanCompletedListener() {
@@ -165,6 +171,7 @@ public class DownloadAPK extends AppCompatActivity {
             }
         }
         protected void onCancelled() {
+            Log.d("MyTag","onCancelled()");
             // cancel메소드를 호출하면 자동으로 호출되는 메소드
             progressBar.setProgress(0);
             textView.setText("다운로드 진행 취소됨");
@@ -172,6 +179,8 @@ public class DownloadAPK extends AppCompatActivity {
     }
 
     public void installApk(File file) {
+        Log.d("MyTag","installApk()");
+        Log.d("MyTag","context.getApplicationContext().getPackageName(): "+context.getApplicationContext().getPackageName());
         Uri fileUri = FileProvider.getUriForFile(context, context.getApplicationContext().getPackageName() + ".fileprovider",file);
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setDataAndType(fileUri, "application/vnd.android.package-archive");
