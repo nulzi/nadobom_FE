@@ -28,5 +28,5 @@ public interface APIConfig {
             @Part("location") RequestBody text,
             @Part MultipartBody.Part image
     );
-    static final String BASE_URL = "http://3.35.9.244:8000/"; // 주소 입력 부분
+    static final String BASE_URL = "http://3.37.128.28:8000/"; // 주소 입력 부분
 }
