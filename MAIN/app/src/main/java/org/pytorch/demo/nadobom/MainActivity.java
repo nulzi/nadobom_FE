@@ -116,7 +116,7 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
             API.getUpdateCheck(BuildConfig.VERSION_CODE, new UpdateCheckCallback() {
                 @Override
                 public void onUpdateCheckCompleted(boolean version) {
-                    Log.d("MyTag","version: "+version);
+//                    Log.d("MyTag","version: "+version);
                     if(!version) showUpdateDialog(MainActivity.this);
                 }
             });

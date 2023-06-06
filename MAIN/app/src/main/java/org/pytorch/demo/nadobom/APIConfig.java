@@ -14,7 +14,7 @@ public interface APIConfig {
     @GET("update/check/{version}")
     Call<ResponseBody> checkUpdate(@Path("version") int version);
 
-    @GET("update/excute")
+    @GET("update/execute")
     Call<ResponseBody> updateApp();
     @Multipart
     @POST("main/")
