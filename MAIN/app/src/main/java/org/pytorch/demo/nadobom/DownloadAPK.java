@@ -50,7 +50,7 @@ public class DownloadAPK extends AppCompatActivity {
         Log.d("MyTag","downloadapk()");
         // 백그라운드 객체를 만들어 주어야 다운로드 취소가 제대로 동작됨
         downloadFileAsyncTask = new DownloadFileFromURL();
-        downloadFileAsyncTask.execute(APIConfig.BASE_URL + "update/excute");
+        downloadFileAsyncTask.execute(APIConfig.BASE_URL + "update/execute");
     }
 
     class DownloadFileFromURL extends AsyncTask<String, Integer, String> {
