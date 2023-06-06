@@ -55,14 +55,6 @@ public class API {
             }
         });
     }
-    public static void updateApp(){
-        retrofit = new Retrofit.Builder()
-                .baseUrl(APIConfig.BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        apiConfig = retrofit.create(APIConfig.class);
-        responseBodyCall = apiConfig.updateApp();
-    }
     public static void postObstacleData(File image, ArrayList<String> resultList) {
         retrofit = new Retrofit.Builder()
                 .baseUrl(APIConfig.BASE_URL)
