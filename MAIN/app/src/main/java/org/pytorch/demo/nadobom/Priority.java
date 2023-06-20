@@ -31,26 +31,26 @@ public class Priority {
             Labels r = new Labels();
             r.name = PrePostProcessor.mClasses[result.get(i).classIndex];
             r.x = mid(result.get(i).rect.left, result.get(i).rect.right);
-            r.y =Double.valueOf(result.get(i).rect.bottom);
+            r.y = Double.valueOf(result.get(i).rect.bottom);
             if(r.y > limitMaxHeight) list.add(r);
         }
 
         return list;
     }
-    private static String directions(double mid_x, double mid_y, int viewWidth, int viewHeight) {
+    private static String directions(double mid_x, double y, int viewWidth, int viewHeight) {
         String direction = "";
         Double left_y = -viewHeight/(viewWidth*1.5/4 - viewWidth*1/5)*(mid_x-viewWidth*1.5/4);
-        Double right_y = viewHeight/(viewWidth*2.5/4 - (viewWidth*4/5))*(mid_x-(viewWidth*2.5/4));
+        Double right_y = -viewHeight/(viewWidth*2.5/4 - (viewWidth*4/5))*(mid_x-(viewWidth*2.5/4));
 
         if(left_y >= 0 && left_y <= viewHeight){
-            if(mid_y < left_y){direction = "좌측";}
+            if(y < left_y) direction = "좌측";
             else{direction = "정면";}
         }
         else if(right_y >=0 && right_y <= viewHeight) {
-            if(mid_y < right_y){direction = "우측";}
+            if(y < right_y) direction = "우측";
             else{direction = "정면";}
         }
-        else{direction = "정면";}
+        else direction = "정면";
         return direction;
     }
 
