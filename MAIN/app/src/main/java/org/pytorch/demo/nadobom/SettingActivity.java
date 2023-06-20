@@ -130,12 +130,12 @@ public class SettingActivity extends AppCompatActivity implements TextToSpeech.O
                 option_speechSpeed = sharedPreferences.getFloat("speechSpeed",SettingOption.speechSpeed);
                 float newSpeechSpeed = Math.round((option_speechSpeed+0.2f)*10)/10f;
                 Log.d("MyTag","speed: "+newSpeechSpeed);
-                if(newSpeechSpeed >= 2.0f) {
-                    editor.putFloat("speechSpeed",2.0f);
+                if(newSpeechSpeed >= 3.0f) {
+                    editor.putFloat("speechSpeed",3.0f);
                     editor.commit();
                     if(textToSpeech.isSpeaking()) textToSpeech.stop();
-                    textToSpeech.setSpeechRate(2.0f);
-                    textToSpeech.speak("말하는 속도가 2배 빨라집니다 최대 속도입니다", TextToSpeech.QUEUE_FLUSH, null, "setSpeechSpeed");
+                    textToSpeech.setSpeechRate(3.0f);
+                    textToSpeech.speak("말하는 속도가 3배 빨라집니다 최대 속도입니다", TextToSpeech.QUEUE_FLUSH, null, "setSpeechSpeed");
                 }
                 else {
                     editor.putFloat("speechSpeed",newSpeechSpeed);
