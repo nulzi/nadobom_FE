@@ -28,6 +28,7 @@ public class SettingActivity extends AppCompatActivity implements TextToSpeech.O
     private Button sbtnFastSpeed;
     private Button sbtnHelpOption;
     private float option_speechSpeed;
+    private long option_odTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,10 +101,13 @@ public class SettingActivity extends AppCompatActivity implements TextToSpeech.O
             @Override
             public void onClick(View v) {
                 option_speechSpeed = sharedPreferences.getFloat("speechSpeed",SettingOption.speechSpeed);
+                option_odTime = sharedPreferences.getLong("odTime",SettingOption.odTime);
                 float newSpeechSpeed = Math.round((option_speechSpeed-0.2f)*10)/10f;
-                Log.d("MyTag","speed: "+newSpeechSpeed);
+                long newOdTime = option_odTime + 100;
+                Log.d("MyTag","speed: "+option_speechSpeed + "odTime: "+option_odTime);
                 if(newSpeechSpeed <= 0.8f) {
                     editor.putFloat("speechSpeed",0.8f);
+                    editor.putLong("odTime",2600L);
                     editor.commit();
                     if(textToSpeech.isSpeaking()) textToSpeech.stop();
                     textToSpeech.setSpeechRate(0.8f);
@@ -111,6 +115,7 @@ public class SettingActivity extends AppCompatActivity implements TextToSpeech.O
                 }
                 else {
                     editor.putFloat("speechSpeed",newSpeechSpeed);
+                    editor.putLong("odTime",newOdTime);
                     editor.commit();
                     if(textToSpeech.isSpeaking()) textToSpeech.stop();
                     textToSpeech.setSpeechRate(newSpeechSpeed);
@@ -128,10 +133,13 @@ public class SettingActivity extends AppCompatActivity implements TextToSpeech.O
             @Override
             public void onClick(View v) {
                 option_speechSpeed = sharedPreferences.getFloat("speechSpeed",SettingOption.speechSpeed);
+                option_odTime = sharedPreferences.getLong("odTime",SettingOption.odTime);
                 float newSpeechSpeed = Math.round((option_speechSpeed+0.2f)*10)/10f;
-                Log.d("MyTag","speed: "+newSpeechSpeed);
+                long newOdTime = option_odTime - 100;
+                Log.d("MyTag","speed: "+option_speechSpeed + "odTime: "+option_odTime);
                 if(newSpeechSpeed >= 3.0f) {
                     editor.putFloat("speechSpeed",3.0f);
+                    editor.putLong("odTime",1500L);
                     editor.commit();
                     if(textToSpeech.isSpeaking()) textToSpeech.stop();
                     textToSpeech.setSpeechRate(3.0f);
@@ -139,6 +147,7 @@ public class SettingActivity extends AppCompatActivity implements TextToSpeech.O
                 }
                 else {
                     editor.putFloat("speechSpeed",newSpeechSpeed);
+                    editor.putLong("odTime",newOdTime);
                     editor.commit();
                     if(textToSpeech.isSpeaking()) textToSpeech.stop();
                     textToSpeech.setSpeechRate(newSpeechSpeed);
