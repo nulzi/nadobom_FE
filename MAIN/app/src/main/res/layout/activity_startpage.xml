@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:keepScreenOn="true"
-    tools:context="org.pytorch.demo.nadobom.StartPageActivity">
+    tools:context="org.pytorch.demo.nadobom.StartPageActivity"
+    android:contentDescription="나도봄 시작 화면입니다.">
 
     <Button
         android:id="@+id/btn_help_start"

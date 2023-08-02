@@ -176,8 +176,8 @@ public class ObjectDetectionActivity extends AbstractCameraXActivity<ObjectDetec
             textToSpeech.setLanguage(Locale.KOREAN);
             textToSpeech.setPitch(1.0f);
             textToSpeech.setSpeechRate(option_speechSpeed);
-            textToSpeech.speak("장애물 탐색을 시작하겠습니다.", TextToSpeech.QUEUE_FLUSH, null, "mainComment");
-            if (option_help) textToSpeech.speak("다음은 장애물 탐지 화면 도움말입니다 장애물 안내텍스트, 신고를 위한 신고 버튼, 장애물 탐지 종료버튼이 있습니다", TextToSpeech.QUEUE_ADD, null, "helpComment");
+//            textToSpeech.speak("장애물 탐색을 시작하겠습니다.", TextToSpeech.QUEUE_FLUSH, null, "mainComment");
+//            if (option_help) textToSpeech.speak("다음은 장애물 탐지 화면 도움말입니다 장애물 안내텍스트, 신고를 위한 신고 버튼, 장애물 탐지 종료버튼이 있습니다", TextToSpeech.QUEUE_ADD, null, "helpComment");
         } else Log.e("MyTag", "TTS initialization fail");
     }
     @Override

@@ -6,7 +6,8 @@
     android:layout_height="match_parent"
     android:background="@android:color/white"
     android:keepScreenOn="true"
-    tools:context=".ObjectDetectionActivity">
+    tools:context=".ObjectDetectionActivity"
+    android:contentDescription="장애물 탐색 화면 입니다.">
 
     <Button
         android:id="@+id/btn_help_main"

@@ -202,7 +202,7 @@ public class SettingActivity extends AppCompatActivity implements TextToSpeech.O
             textToSpeech.setLanguage(Locale.KOREAN);
             textToSpeech.setPitch(1.0f);
             textToSpeech.setSpeechRate(option_speechSpeed);
-            textToSpeech.speak("설정 화면입니다. 원하시는대로 설정을 변경하세요.",TextToSpeech.QUEUE_FLUSH,null,"settingComment");
+//            textToSpeech.speak("설정 화면입니다. 원하시는대로 설정을 변경하세요.",TextToSpeech.QUEUE_FLUSH,null,"settingComment");
         }
         else Log.e("MyTag","TTS initialization fail");
     }

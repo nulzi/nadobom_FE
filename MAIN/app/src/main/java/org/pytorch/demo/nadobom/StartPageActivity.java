@@ -148,8 +148,8 @@ public class StartPageActivity extends AppCompatActivity implements TextToSpeech
                 if(textToSpeech.isSpeaking()) textToSpeech.stop();
                 textToSpeech.speak("새로운 버전의 앱이 있습니다 업데이트 하시겠습니까?", TextToSpeech.QUEUE_FLUSH, null, "updateComment");
             }else {
-                textToSpeech.speak("나도봄 시작 화면입니다.", TextToSpeech.QUEUE_FLUSH, null, "startComment");
-                if (option_help) textToSpeech.speak("다음은 시작 화면 도움말입니다 장애물 탐지 시작버튼, 설정을 위한 설정버튼이 있습니다", TextToSpeech.QUEUE_ADD, null, "helpComment");
+//                textToSpeech.speak("나도봄 시작 화면입니다.", TextToSpeech.QUEUE_FLUSH, null, "startComment");
+//                if (option_help) textToSpeech.speak("다음은 시작 화면 도움말입니다 장애물 탐지 시작버튼, 설정을 위한 설정버튼이 있습니다", TextToSpeech.QUEUE_ADD, null, "helpComment");
             }
         } else Log.e("MyTag", "TTS initialization fail");
     }
@@ -169,7 +169,7 @@ public class StartPageActivity extends AppCompatActivity implements TextToSpeech
             btnSetting.setTextSize(Dimension.SP,option_textSize);
 
             textToSpeech.setSpeechRate(option_speechSpeed);
-            textToSpeech.speak("나도봄 시작 화면입니다.", TextToSpeech.QUEUE_FLUSH, null, "startComment");
+//            textToSpeech.speak("나도봄 시작 화면입니다.", TextToSpeech.QUEUE_FLUSH, null, "startComment");
         }
         else Log.e("MyTag","textToSpeech is null");
         super.onResume();
