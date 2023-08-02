@@ -57,7 +57,7 @@ public class StartPageActivity extends AppCompatActivity implements TextToSpeech
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA,Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
         }
 
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_startpage);
         sharedPreferences = getSharedPreferences("settingOption",MODE_PRIVATE);
         // 설정 옵션 초기화
         if(sharedPreferences.getAll().size() == 0){
