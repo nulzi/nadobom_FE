@@ -34,7 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class MainActivity extends AppCompatActivity implements TextToSpeech.OnInitListener {
+public class StartPageActivity extends AppCompatActivity implements TextToSpeech.OnInitListener {
 
     public static TextToSpeech textToSpeech;
     private AlertDialog updateDialog;
@@ -91,7 +91,7 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
                 if (textToSpeech != null && textToSpeech.isSpeaking()) {
                     textToSpeech.stop();
                 }
-              final Intent intent = new Intent(MainActivity.this, ObjectDetectionActivity.class);
+              final Intent intent = new Intent(StartPageActivity.this, ObjectDetectionActivity.class);
               startActivity(intent);
             }
         });
@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
                 if (textToSpeech != null && textToSpeech.isSpeaking()) {
                     textToSpeech.stop();
                 }
-                final Intent intent = new Intent(MainActivity.this, SettingActivity.class);
+                final Intent intent = new Intent(StartPageActivity.this, SettingActivity.class);
                 startActivity(intent);
             }
         });
@@ -117,7 +117,7 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
                 @Override
                 public void onUpdateCheckCompleted(boolean version) {
 //                    Log.d("MyTag","version: "+version);
-                    if(!version) showUpdateDialog(MainActivity.this);
+                    if(!version) showUpdateDialog(StartPageActivity.this);
                 }
             });
         }
@@ -195,7 +195,7 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 Log.d("MyTag","update start");
-                Intent intent = new Intent(MainActivity.this, DownloadAPK.class);
+                Intent intent = new Intent(StartPageActivity.this, DownloadAPK.class);
                 startActivity(intent);
             }
         });

@@ -27,7 +27,7 @@
             android:name=".SettingActivity"
             android:exported="false" />
         <activity
-            android:name=".MainActivity"
+            android:name=".StartPageActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait">
             <intent-filter>
