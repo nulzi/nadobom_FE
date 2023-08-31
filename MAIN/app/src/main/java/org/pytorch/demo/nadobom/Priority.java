@@ -42,15 +42,18 @@ public class Priority {
         Double left_y = -viewHeight/(viewWidth*1.5/4 - viewWidth*1/5)*(mid_x-viewWidth*1.5/4);
         Double right_y = -viewHeight/(viewWidth*2.5/4 - (viewWidth*4/5))*(mid_x-(viewWidth*2.5/4));
 
-        if(left_y >= 0 && left_y <= viewHeight){
-            if(y < left_y) direction = "좌측";
-            else{direction = "정면";}
+        if(left_y >= 0 && left_y <= viewHeight && y < left_y){
+//            if(y < left_y) direction = "좌측";
+//            else{direction = "정면";}
+            direction = "좌측";
         }
-        else if(right_y >=0 && right_y <= viewHeight) {
-            if(y < right_y) direction = "우측";
-            else{direction = "정면";}
+        else if(right_y >=0 && right_y <= viewHeight && y < right_y) {
+//            if(y < right_y) direction = "우측";
+//            else{direction = "정면";}
+            direction = "우측";
         }
-        else direction = "정면";
+        else if(((left_y >= 0 && left_y <= viewHeight) || (right_y >=0 && right_y <= viewHeight)) && y >= left_y || y >= right_y) direction = "정면";
+        else direction = "오류";
         return direction;
     }
 
