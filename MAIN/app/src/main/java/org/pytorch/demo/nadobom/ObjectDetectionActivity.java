@@ -139,7 +139,7 @@ public class ObjectDetectionActivity extends AbstractCameraXActivity<ObjectDetec
             @Override
             public void afterTextChanged(Editable editable) {
                 if (editable == null) Log.e("afterTextChanged", "null exception");
-                if (!editable.toString().equals("result") && !editable.toString().equals("장애물 탐색 중")) {
+                else if (!editable.toString().equals("result") && !editable.toString().equals("장애물 탐색 중")) {
                     textToSpeech.speak(editable.toString(), TextToSpeech.QUEUE_FLUSH, null, null);
                 }
             }
@@ -164,6 +164,7 @@ public class ObjectDetectionActivity extends AbstractCameraXActivity<ObjectDetec
         btnEnd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(textToSpeech.isSpeaking()) textToSpeech.stop();
                 finish();
             }
         });
@@ -355,13 +356,13 @@ public class ObjectDetectionActivity extends AbstractCameraXActivity<ObjectDetec
 
     @Override
     protected void applyToUiAnalyzeImageResult(AnalysisResult result) {
-        if(!textToSpeech.isSpeaking()) {
+//        if(!textToSpeech.isSpeaking()) {
             mResultView.setResults(result.mResults);
             mResultView.invalidate();
-            if (!result.mResults.isEmpty())
+            if (!textToSpeech.isSpeaking() && !result.mResults.isEmpty())
                 tvObstacle.setText(makeResultText(Priority.priority(Priority.input(result.mResults, viewHeight), viewWidth, viewHeight)));
-            else tvObstacle.setText("장애물 탐색 중");
-        }
+            else if (result.mResults.isEmpty()) tvObstacle.setText("장애물 탐색 중");
+//        }
     }
 
     private Bitmap imgToBitmap(Image image) {
