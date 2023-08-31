@@ -107,7 +107,7 @@ public class SettingActivity extends AppCompatActivity implements TextToSpeech.O
                 Log.d("MyTag","speed: "+option_speechSpeed + "odTime: "+option_odTime);
                 if(newSpeechSpeed <= 0.8f) {
                     editor.putFloat("speechSpeed",0.8f);
-                    editor.putLong("odTime",2600L);
+                    editor.putLong("odTime",1600L);
                     editor.commit();
                     if(textToSpeech.isSpeaking()) textToSpeech.stop();
                     textToSpeech.setSpeechRate(0.8f);
@@ -139,7 +139,7 @@ public class SettingActivity extends AppCompatActivity implements TextToSpeech.O
                 Log.d("MyTag","speed: "+option_speechSpeed + "odTime: "+option_odTime);
                 if(newSpeechSpeed >= 3.0f) {
                     editor.putFloat("speechSpeed",3.0f);
-                    editor.putLong("odTime",1500L);
+                    editor.putLong("odTime",500L);
                     editor.commit();
                     if(textToSpeech.isSpeaking()) textToSpeech.stop();
                     textToSpeech.setSpeechRate(3.0f);
