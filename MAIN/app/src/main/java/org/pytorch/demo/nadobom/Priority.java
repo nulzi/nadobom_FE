@@ -1,5 +1,7 @@
 package org.pytorch.demo.nadobom;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 
 class Labels {
@@ -43,17 +45,14 @@ public class Priority {
         Double right_y = -viewHeight/(viewWidth*2.5/4 - (viewWidth*4/5))*(mid_x-(viewWidth*2.5/4));
 
         if(left_y >= 0 && left_y <= viewHeight && y < left_y){
-//            if(y < left_y) direction = "좌측";
-//            else{direction = "정면";}
             direction = "좌측";
         }
         else if(right_y >=0 && right_y <= viewHeight && y < right_y) {
-//            if(y < right_y) direction = "우측";
-//            else{direction = "정면";}
             direction = "우측";
         }
-        else if(((left_y >= 0 && left_y <= viewHeight) || (right_y >=0 && right_y <= viewHeight)) && y >= left_y || y >= right_y) direction = "정면";
-        else direction = "오류";
+        else if((left_y <= viewHeight || right_y <= viewHeight) && (y >= left_y || y >= right_y)) direction = "정면";
+        else direction = "정면";
+        Log.d("MyTag","directions:"+left_y+","+right_y+","+viewHeight+","+mid_x+","+y);
         return direction;
     }
 

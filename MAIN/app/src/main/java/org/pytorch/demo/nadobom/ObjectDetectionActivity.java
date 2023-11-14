@@ -345,7 +345,7 @@ public class ObjectDetectionActivity extends AbstractCameraXActivity<ObjectDetec
         String result2 = results.get(3);
 //        String count = results.get(4);
 
-//        Log.d("MyTag", location1 + " " + result1 + ", " + location2 + " " + result2);
+        Log.d("MyTag", location1 + " " + result1 + ", " + location2 + " " + result2);
         if (location1.equals(location2) && result1.equals(result2))
             return location1 + " " + result1 + " 2개";
 
